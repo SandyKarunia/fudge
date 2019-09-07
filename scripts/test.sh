@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+echo "Running tests..."
+go test -v -cover -race ./...
+
 echo "Running go fmt..."
 goFmtOutput="$(go fmt ./...)"
 if [ -n "${goFmtOutput}" ]
