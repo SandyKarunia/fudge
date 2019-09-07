@@ -12,6 +12,7 @@ import (
 	"time"
 )
 
+// Start starts the judge server
 func Start() {
 	defaultPort := 8080
 
@@ -20,8 +21,8 @@ func Start() {
 
 	addr := fmt.Sprintf("0.0.0.0:%d", defaultPort)
 	srv := &http.Server{
-		Addr:              addr,
-		Handler:           r,
+		Addr:    addr,
+		Handler: r,
 		// Good practice to set timeouts to avoid Slowloris attacks.
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
@@ -45,7 +46,7 @@ func Start() {
 	<-c
 
 	// Create a deadline to wait for.
-	ctx, cancel := context.WithTimeout(context.Background(), 15 * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 	// Doesn't block if no connections, but will otherwise wait
 	// until the timeout deadline.
