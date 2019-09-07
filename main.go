@@ -1,9 +1,7 @@
 package main
 
-import (
-	"fmt"
-)
+import "gitlab.com/sandykarunia/fudge/server"
 
 func main() {
-	fmt.Println("HELLO")
+	server.Start()
 }
