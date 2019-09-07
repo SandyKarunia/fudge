@@ -10,4 +10,4 @@ then
 fi
 
 echo "Running golint..."
-goLintOutput=$(golint -set_exit_status ./...)
+goLintOutput=$("${GOPATH}"/bin/golint -set_exit_status ./...)
