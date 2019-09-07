@@ -34,3 +34,4 @@ build:
     BUILD_DIST_FOLDER: ${CI_PROJECT_DIR}/dist/
   only:
     - master
+    - tags
