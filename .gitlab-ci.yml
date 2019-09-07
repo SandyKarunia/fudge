@@ -11,6 +11,7 @@ before_script:
   - cp -r ${CI_PROJECT_DIR}/. ${GO_PROJECT_DIR}
   - cd ${GO_PROJECT_DIR}
   - go get -t -v -d ./...
+  - go get -u golang.org/x/lint/golint
 
 stages:
   - test
@@ -31,3 +32,5 @@ build:
     - ${CI_PROJECT_DIR}/dist/
   variables:
     BUILD_DIST_FOLDER: ${CI_PROJECT_DIR}/dist/
+  only:
+    - master
