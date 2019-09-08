@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -eo pipefail
+
 releaseTag="${CI_PIPELINE_ID}"
 if [ -n "${CI_COMMIT_TAG}" ]
 then
