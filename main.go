@@ -15,6 +15,7 @@ func main() {
 		fmt.Println("Please run this program as root, we need root to run the isolate binary")
 		os.Exit(1)
 	}
+
 	rand.Seed(time.Now().UTC().UnixNano())
 	server.Start()
 }
