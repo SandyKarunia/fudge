@@ -1,12 +1,8 @@
 package sandbox
 
 import (
-	"errors"
 	"os"
 )
-
-var MoeErrorIsNotReady = errors.New("moe sandbox is not ready yet, please call Initialize() before use")
-var MoeErrorIsGone = errors.New("moe sandbox is gone and should not be used anymore")
 
 type moeSandbox struct {
 	// if true, means the sandbox has been destroyed and should not be used anymore
@@ -59,11 +55,11 @@ func (m *moeSandbox) Destroy() {
 func (m *moeSandbox) beforeUseCheck() error {
 	// sandbox has been destroyed
 	if m.isDestroyed {
-		return MoeErrorIsGone
+		return ErrMoeIsGone
 	}
 	// sandbox has not been initialized
 	if !m.isInitialized {
-		return MoeErrorIsNotReady
+		return ErrMoeIsNotReady
 	}
 	return nil
 }
