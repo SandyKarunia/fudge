@@ -31,7 +31,8 @@ func TestGenerateRandomAlphanumericString(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		res := GenerateRandomAlphanumericString(test.length)
+		obj := &stringImpl{}
+		res := obj.GenerateRandomAlphanumeric(test.length)
 		assert.Equal(t, test.expectedLength, len(res), test.description)
 		// check for allowed chars
 		for _, c := range res {

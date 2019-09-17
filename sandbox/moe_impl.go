@@ -20,6 +20,11 @@ func (m *moeSandbox) Initialize() error {
 	if m.isInitialized {
 		return nil
 	}
+
+	// copy configuration file to the default location
+	//if err := utils.Copy(sdk.Inject(), MoeDefaultConfigSource, MoeDefaultConfigDestination); err != nil {
+	//	return err
+	//}
 	panic("implement me")
 }
 

@@ -24,4 +24,10 @@ then
 fi
 
 print_title "Running golint..."
-"${GOPATH}"/bin/golint -set_exit_status ./...
+# find all folders under current directory, excluding hidden items and /mocks folders
+foldersToLint=($(find . -type d -not -path '*/\.*' | grep -v /mocks))
+for t in "${foldersToLint[@]}"
+do
+  echo "$t"
+done
+"${GOPATH}"/bin/golint -set_exit_status "${foldersToLint[@]}"

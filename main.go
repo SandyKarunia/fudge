@@ -11,7 +11,7 @@ import (
 
 func main() {
 	// Check whether the we are in sudo environment or not
-	if !utils.IsSudo() {
+	if !utils.SystemInstance().IsSudo() {
 		fmt.Println("Please run this program as root, we need root to run the isolate binary")
 		os.Exit(1)
 	}

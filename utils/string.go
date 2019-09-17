@@ -1,9 +1,23 @@
 package utils
 
-import "math/rand"
+import (
+	"math/rand"
+	"sync"
+)
 
-// GenerateRandomAlphanumericString generates a random string based on passed specifications
-func GenerateRandomAlphanumericString(length int) string {
+var stringOnce sync.Once
+var stringInstance String
+
+// String ...
+//go:generate mockery -name=String
+type String interface {
+	// GenerateRandomAlphanumeric generates a random string based on passed specifications
+	GenerateRandomAlphanumeric(length int) string
+}
+
+type stringImpl struct{}
+
+func (s *stringImpl) GenerateRandomAlphanumeric(length int) string {
 	if length <= 0 {
 		return ""
 	}
@@ -14,4 +28,12 @@ func GenerateRandomAlphanumericString(length int) string {
 		res[i] = chars[rand.Intn(len(chars))]
 	}
 	return string(res)
+}
+
+// ProvideString ...
+func ProvideString() String {
+	stringOnce.Do(func() {
+		stringInstance = &stringImpl{}
+	})
+	return stringInstance
 }
