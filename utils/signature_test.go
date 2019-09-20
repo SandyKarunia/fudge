@@ -40,9 +40,10 @@ func TestHMACSign(t *testing.T) {
 		},
 	}
 
+	obj := &signatureImpl{}
 	for _, test := range tests {
 		t.Run(test.desc, func(t *testing.T) {
-			res := hmacSign(test.timestamp, test.nonce, test.secret, test.payload)
+			res := obj.hmacSign(test.timestamp, test.nonce, test.secret, test.payload)
 			assert.Equal(t, test.expectedOutput, res, test.desc)
 		})
 	}
@@ -71,7 +72,7 @@ func TestIsValidHMACSignature(t *testing.T) {
 		{
 			"timestamp too early",
 			"pHu3MHpNq8vdTJCI862zFCLz8TRu5ROmh5U4r4R2SvI=",
-			now.Add(-time.Duration(maxRequestDuration) - time.Second),
+			now.Add(-time.Duration(signatureMaxRequestDuration) - time.Second),
 			"4092540c-aae6-49c5-8a8c-69de7317fde9",
 			"d6qOq9Bu9vQ76ClWrV8J",
 			toStrPtr(testPayload),
@@ -80,7 +81,7 @@ func TestIsValidHMACSignature(t *testing.T) {
 		{
 			"timestamp too late",
 			"pHu3MHpNq8vdTJCI862zFCLz8TRu5ROmh5U4r4R2SvI=",
-			now.Add(time.Duration(maxRequestDuration) + time.Second),
+			now.Add(time.Duration(signatureMaxRequestDuration) + time.Second),
 			"4092540c-aae6-49c5-8a8c-69de7317fde9",
 			"d6qOq9Bu9vQ76ClWrV8J",
 			toStrPtr(testPayload),
@@ -97,9 +98,10 @@ func TestIsValidHMACSignature(t *testing.T) {
 		},
 	}
 
+	obj := &signatureImpl{}
 	for _, test := range tests {
 		t.Run(test.desc, func(t *testing.T) {
-			res := isValidHMACSignature(test.signature, now, test.timestamp, test.nonce, test.secret, test.payload)
+			res := obj.IsValidHMACSignature(test.signature, now, test.timestamp, test.nonce, test.secret, test.payload)
 			assert.Equal(t, test.expectedOutput, res, test.desc)
 		})
 	}
