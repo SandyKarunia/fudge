@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"gitlab.com/sandykarunia/fudge/groundcheck"
 	"log"
 	"net/http"
 	"os"
@@ -12,8 +13,23 @@ import (
 	"time"
 )
 
-// Start starts the judge server
-func Start() {
+// Server is an interface for a fudge server
+type Server interface {
+	// Start starts fudge server
+	Start()
+}
+
+type serverImpl struct {
+	groundCheck groundcheck.GroundCheck
+}
+
+func (s *serverImpl) Start() {
+	// before we do something, do ground check first
+	if err := s.groundCheck.CheckAll(); err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+
 	defaultPort := 8080
 
 	r := mux.NewRouter()
