@@ -3,12 +3,6 @@ package groundcheck
 import (
 	"errors"
 	"gitlab.com/sandykarunia/fudge/utils"
-	"sync"
-)
-
-var (
-	groundCheck     GroundCheck
-	groundCheckOnce sync.Once
 )
 
 // GroundCheck is an entity that checks the machines where the program will run

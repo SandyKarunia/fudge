@@ -2,11 +2,7 @@ package utils
 
 import (
 	"gitlab.com/sandykarunia/fudge/sdk"
-	"sync"
 )
-
-var systemOnce sync.Once
-var system System
 
 // System ...
 //go:generate mockery -name=System
@@ -30,10 +26,7 @@ func (o *systemImpl) IsSudo() bool {
 
 // ProvideSystem ...
 func ProvideSystem(os sdk.OSFunctions) System {
-	systemOnce.Do(func() {
-		system = &systemImpl{
-			os: os,
-		}
-	})
-	return system
+	return &systemImpl{
+		os: os,
+	}
 }
