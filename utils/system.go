@@ -31,7 +31,9 @@ func (o *systemImpl) IsSudo() bool {
 // ProvideSystem ...
 func ProvideSystem(os sdk.OSFunctions) System {
 	systemOnce.Do(func() {
-		system = &systemImpl{}
+		system = &systemImpl{
+			os: os,
+		}
 	})
 	return system
 }
