@@ -36,15 +36,17 @@ func TestIsSudo(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		mockOS := &mocks.OSFunctions{}
+		t.Run(test.desc, func(t *testing.T) {
+			mockOS := &mocks.OSFunctions{}
 
-		mockOS.On("Geteuid").Return(test.euid)
-		mockOS.On("Getenv", "SUDO_UID").Return(test.sudoUIDEnv)
-		mockOS.On("Getenv", "SUDO_GID").Return(test.sudoGIDEnv)
-		mockOS.On("Getenv", "SUDO_USER").Return(test.sudoUserEnv)
+			mockOS.On("Geteuid").Return(test.euid)
+			mockOS.On("Getenv", "SUDO_UID").Return(test.sudoUIDEnv)
+			mockOS.On("Getenv", "SUDO_GID").Return(test.sudoGIDEnv)
+			mockOS.On("Getenv", "SUDO_USER").Return(test.sudoUserEnv)
 
-		obj := &systemImpl{os: mockOS}
-		res := obj.IsSudo()
-		assert.Equal(t, test.want, res)
+			obj := &systemImpl{os: mockOS}
+			res := obj.IsSudo()
+			assert.Equal(t, test.want, res)
+		})
 	}
 }

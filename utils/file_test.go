@@ -45,23 +45,25 @@ func TestFileUtilsImpl_Copy(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		mockOS := &mocks.OSFunctions{}
-		mockIO := &mocks.IOFunctions{}
+		t.Run(test.description, func(t *testing.T) {
+			mockOS := &mocks.OSFunctions{}
+			mockIO := &mocks.IOFunctions{}
 
-		paramSrc := "a"
-		paramDest := "b"
+			paramSrc := "a"
+			paramDest := "b"
 
-		mockOS.On("Open", paramSrc).Return(test.source, test.openErr)
-		mockOS.On("Create", paramDest).Return(test.dest, test.createErr)
+			mockOS.On("Open", paramSrc).Return(test.source, test.openErr)
+			mockOS.On("Create", paramDest).Return(test.dest, test.createErr)
 
-		mockIO.On("Copy", mock.Anything, mock.Anything).Return(int64(0), test.copyErr)
+			mockIO.On("Copy", mock.Anything, mock.Anything).Return(int64(0), test.copyErr)
 
-		obj := &fileImpl{
-			os: mockOS,
-			io: mockIO,
-		}
-		ret := obj.Copy(paramSrc, paramDest)
+			obj := &fileImpl{
+				os: mockOS,
+				io: mockIO,
+			}
+			ret := obj.Copy(paramSrc, paramDest)
 
-		assert.Equal(t, test.wantReturn, ret)
+			assert.Equal(t, test.wantReturn, ret)
+		})
 	}
 }

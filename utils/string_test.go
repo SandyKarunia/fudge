@@ -31,14 +31,16 @@ func TestGenerateRandomAlphanumericString(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		obj := &stringImpl{}
-		res := obj.GenerateRandomAlphanumeric(test.length)
-		assert.Equal(t, test.expectedLength, len(res), test.description)
-		// check for allowed chars
-		for _, c := range res {
-			if !strings.Contains(allowedChars, string(c)) {
-				t.Fatalf("Result contains illegal character: %c", c)
+		t.Run(test.description, func(t *testing.T) {
+			obj := &stringImpl{}
+			res := obj.GenerateRandomAlphanumeric(test.length)
+			assert.Equal(t, test.expectedLength, len(res), test.description)
+			// check for allowed chars
+			for _, c := range res {
+				if !strings.Contains(allowedChars, string(c)) {
+					t.Fatalf("Result contains illegal character: %c", c)
+				}
 			}
-		}
+		})
 	}
 }
