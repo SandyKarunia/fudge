@@ -2,11 +2,7 @@ package utils
 
 import (
 	"gitlab.com/sandykarunia/fudge/sdk"
-	"sync"
 )
-
-var fileOnce sync.Once
-var file File
 
 // File ...
 //go:generate mockery -name=File
@@ -41,11 +37,8 @@ func (f *fileImpl) Copy(src, dest string) error {
 
 // ProvideFile ...
 func ProvideFile(io sdk.IOFunctions, os sdk.OSFunctions) File {
-	fileOnce.Do(func() {
-		file = &fileImpl{
-			io: io,
-			os: os,
-		}
-	})
-	return file
+	return &fileImpl{
+		io: io,
+		os: os,
+	}
 }

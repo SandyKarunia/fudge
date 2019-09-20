@@ -2,13 +2,9 @@ package sdk
 
 import (
 	"io"
-	"sync"
 )
 
 var (
-	ioFunctionsOnce sync.Once
-	ioFunctions     IOFunctions
-
 	ioCopy = io.Copy
 )
 
@@ -26,8 +22,5 @@ func (i *ioFunctionsImpl) Copy(dest io.Writer, src io.Reader) (written int64, er
 
 // ProvideIOFunctions ...
 func ProvideIOFunctions() IOFunctions {
-	ioFunctionsOnce.Do(func() {
-		ioFunctions = &ioFunctionsImpl{}
-	})
-	return ioFunctions
+	return &ioFunctionsImpl{}
 }

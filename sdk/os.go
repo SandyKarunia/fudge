@@ -2,13 +2,9 @@ package sdk
 
 import (
 	"os"
-	"sync"
 )
 
 var (
-	osFunctionsOnce sync.Once
-	osFunctions     OSFunctions
-
 	osOpen    = os.Open
 	osCreate  = os.Create
 	osGeteuid = os.Geteuid
@@ -44,8 +40,5 @@ func (o *osFunctionsImpl) Getenv(key string) string {
 
 // ProvideOSFunctions ...
 func ProvideOSFunctions() OSFunctions {
-	osFunctionsOnce.Do(func() {
-		osFunctions = &osFunctionsImpl{}
-	})
-	return osFunctions
+	return &osFunctionsImpl{}
 }

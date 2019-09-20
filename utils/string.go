@@ -2,11 +2,7 @@ package utils
 
 import (
 	"math/rand"
-	"sync"
 )
-
-var stringOnce sync.Once
-var stringInstance String
 
 // String ...
 //go:generate mockery -name=String
@@ -32,8 +28,5 @@ func (s *stringImpl) GenerateRandomAlphanumeric(length int) string {
 
 // ProvideString ...
 func ProvideString() String {
-	stringOnce.Do(func() {
-		stringInstance = &stringImpl{}
-	})
-	return stringInstance
+	return &stringImpl{}
 }

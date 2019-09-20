@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"strconv"
-	"sync"
 	"time"
 )
 
@@ -17,11 +16,6 @@ const (
 	// if it's too low, then it could fail many genuine requests
 	// (if latency between client and server is high).
 	signatureMaxRequestDuration = int64(2 * time.Minute)
-)
-
-var (
-	signatureOnce sync.Once
-	signature     Signature
 )
 
 // Signature ...
@@ -89,8 +83,5 @@ func (*signatureImpl) hmacSign(
 
 // ProvideSignature ...
 func ProvideSignature() Signature {
-	signatureOnce.Do(func() {
-		signature = &signatureImpl{}
-	})
-	return signature
+	return &signatureImpl{}
 }
