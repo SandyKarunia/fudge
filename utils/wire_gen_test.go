@@ -10,6 +10,11 @@ func TestFileInstance(t *testing.T) {
 	assert.Implements(t, (*File)(nil), obj)
 }
 
+func TestSignatureInstance(t *testing.T) {
+	obj := SignatureInstance()
+	assert.Implements(t, (*Signature)(nil), obj)
+}
+
 func TestStringInstance(t *testing.T) {
 	obj := StringInstance()
 	assert.Implements(t, (*String)(nil), obj)
