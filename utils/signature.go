@@ -5,20 +5,44 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"strconv"
+	"sync"
 	"time"
 )
 
 const (
-	// maxRequestDuration is the max difference of timestamp between
+	// signatureMaxRequestDuration is the max difference of timestamp between
 	// server time and the one in the request.
 	// It's used to prevent replay attack.
 	// If value is too high, then there's a high risk of replay attack;
 	// if it's too low, then it could fail many genuine requests
 	// (if latency between client and server is high).
-	maxRequestDuration = int64(2 * time.Minute)
+	signatureMaxRequestDuration = int64(2 * time.Minute)
 )
 
-func isValidHMACSignature(
+var (
+	signatureOnce sync.Once
+	signature     Signature
+)
+
+// Signature ...
+//go:generate mockery -name=Signature
+type Signature interface {
+	// IsValidHMACSignature checks whether the given signature
+	// can be reconstructed with the other payloads.
+	IsValidHMACSignature(
+		signature string,
+		now time.Time,
+		timestamp time.Time,
+		nonce string,
+		secret string,
+		payload *string,
+	) bool
+}
+
+type signatureImpl struct {
+}
+
+func (s *signatureImpl) IsValidHMACSignature(
 	signature string,
 	now time.Time,
 	timestamp time.Time,
@@ -32,7 +56,7 @@ func isValidHMACSignature(
 		durInt *= -1
 	}
 	// To prevent replay attack that happens sometime after the original request.
-	if durInt > maxRequestDuration {
+	if durInt > signatureMaxRequestDuration {
 		return false
 	}
 
@@ -40,10 +64,15 @@ func isValidHMACSignature(
 		s := ""
 		payload = &s
 	}
-	return signature == hmacSign(timestamp, nonce, secret, payload)
+	return signature == s.hmacSign(timestamp, nonce, secret, payload)
 }
 
-func hmacSign(timestamp time.Time, nonce string, secret string, payload *string) string {
+func (*signatureImpl) hmacSign(
+	timestamp time.Time,
+	nonce string,
+	secret string,
+	payload *string,
+) string {
 	if payload == nil {
 		return ""
 	}
@@ -56,4 +85,12 @@ func hmacSign(timestamp time.Time, nonce string, secret string, payload *string)
 	msg := timestampStr + *payload + nonce
 	h.Write([]byte(msg))
 	return base64.StdEncoding.EncodeToString(h.Sum(nil))
+}
+
+// ProvideSignature ...
+func ProvideSignature() Signature {
+	signatureOnce.Do(func() {
+		signature = &signatureImpl{}
+	})
+	return signature
 }

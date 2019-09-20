@@ -18,6 +18,13 @@ func FileInstance() File {
 	return utilsFile
 }
 
+// Injectors from signature_wire.go:
+
+func SignatureInstance() Signature {
+	utilsSignature := ProvideSignature()
+	return utilsSignature
+}
+
 // Injectors from string_wire.go:
 
 func StringInstance() String {
