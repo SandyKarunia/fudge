@@ -44,3 +44,7 @@ func TestGenerateRandomAlphanumericString(t *testing.T) {
 		})
 	}
 }
+
+func TestProvideString(t *testing.T) {
+	assert.Implements(t, (*String)(nil), ProvideString())
+}

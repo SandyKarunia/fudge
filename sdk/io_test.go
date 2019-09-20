@@ -21,3 +21,7 @@ func TestIoFunctionsImpl_Copy(t *testing.T) {
 	assert.Nil(t, reserr)
 	assert.Equal(t, int64(-1), res)
 }
+
+func TestProvideIOFunctions(t *testing.T) {
+	assert.Implements(t, (*IOFunctions)(nil), ProvideIOFunctions())
+}

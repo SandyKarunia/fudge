@@ -68,3 +68,7 @@ func TestOsFunctionsImpl_Open(t *testing.T) {
 	assert.Nil(t, res)
 	assert.Equal(t, errors.New("name: name1"), err)
 }
+
+func TestProvideOSFunctions(t *testing.T) {
+	assert.Implements(t, (*OSFunctions)(nil), ProvideOSFunctions())
+}

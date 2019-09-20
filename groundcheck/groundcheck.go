@@ -5,6 +5,8 @@ import (
 	"gitlab.com/sandykarunia/fudge/utils"
 )
 
+var errNotSudo = errors.New("groundcheck: please run this program as root, we need root to run the isolate binary")
+
 // GroundCheck is an entity that checks the machines where the program will run
 //go:generate mockery -name=GroundCheck
 type GroundCheck interface {
@@ -20,7 +22,7 @@ type groundCheckImpl struct {
 func (g *groundCheckImpl) CheckAll() error {
 	// Check whether the we are in sudo environment or not
 	if !g.sysUtils.IsSudo() {
-		return errors.New("please run this program as root, we need root to run the isolate binary")
+		return errNotSudo
 	}
 	return nil
 }

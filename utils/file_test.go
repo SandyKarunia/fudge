@@ -67,3 +67,8 @@ func TestFileUtilsImpl_Copy(t *testing.T) {
 		})
 	}
 }
+
+func TestProvideFile(t *testing.T) {
+	res := ProvideFile(nil, nil)
+	assert.Implements(t, (*File)(nil), res)
+}
