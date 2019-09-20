@@ -50,3 +50,7 @@ func TestIsSudo(t *testing.T) {
 		})
 	}
 }
+
+func TestProvideSystem(t *testing.T) {
+	assert.Implements(t, (*System)(nil), ProvideSystem(nil))
+}

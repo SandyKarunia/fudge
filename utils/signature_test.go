@@ -106,3 +106,7 @@ func TestIsValidHMACSignature(t *testing.T) {
 		})
 	}
 }
+
+func TestProvideSignature(t *testing.T) {
+	assert.Implements(t, (*Signature)(nil), ProvideSignature())
+}
