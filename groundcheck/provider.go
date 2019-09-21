@@ -1,10 +1,10 @@
 package groundcheck
 
-import "gitlab.com/sandykarunia/fudge/utils"
+import "gitlab.com/sandykarunia/fudge/groundcheck/checkers"
 
 // Provider ...
-func Provider(sysUtils utils.System) GroundCheck {
+func Provider(checkers checkers.Checkers) GroundCheck {
 	return &groundCheckImpl{
-		sysUtils: sysUtils,
+		c: checkers,
 	}
 }

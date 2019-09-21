@@ -21,3 +21,17 @@ func (_m *File) Copy(src string, dest string) error {
 
 	return r0
 }
+
+// Exists provides a mock function with given fields: path
+func (_m *File) Exists(path string) bool {
+	ret := _m.Called(path)
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func(string) bool); ok {
+		r0 = rf(path)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	return r0
+}

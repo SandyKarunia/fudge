@@ -63,6 +63,20 @@ func (_m *OSFunctions) Geteuid() int {
 	return r0
 }
 
+// IsNotExist provides a mock function with given fields: err
+func (_m *OSFunctions) IsNotExist(err error) bool {
+	ret := _m.Called(err)
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func(error) bool); ok {
+		r0 = rf(err)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	return r0
+}
+
 // Open provides a mock function with given fields: name
 func (_m *OSFunctions) Open(name string) (*os.File, error) {
 	ret := _m.Called(name)
@@ -79,6 +93,50 @@ func (_m *OSFunctions) Open(name string) (*os.File, error) {
 	var r1 error
 	if rf, ok := ret.Get(1).(func(string) error); ok {
 		r1 = rf(name)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Stat provides a mock function with given fields: name
+func (_m *OSFunctions) Stat(name string) (os.FileInfo, error) {
+	ret := _m.Called(name)
+
+	var r0 os.FileInfo
+	if rf, ok := ret.Get(0).(func(string) os.FileInfo); ok {
+		r0 = rf(name)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(os.FileInfo)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(name)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UserHomeDir provides a mock function with given fields:
+func (_m *OSFunctions) UserHomeDir() (string, error) {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
 	} else {
 		r1 = ret.Error(1)
 	}

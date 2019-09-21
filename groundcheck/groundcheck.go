@@ -2,27 +2,40 @@ package groundcheck
 
 import (
 	"errors"
-	"gitlab.com/sandykarunia/fudge/utils"
+	"gitlab.com/sandykarunia/fudge/groundcheck/checkers"
 )
 
-var errNotSudo = errors.New("groundcheck: please run this program as root, we need root to run the isolate binary")
+var (
+	errCheckAllFailed = errors.New("at least one check failed")
+)
 
 // GroundCheck is an entity that checks the machines where the program will run
 //go:generate mockery -name=GroundCheck
 type GroundCheck interface {
 	// CheckAll observes the environment / all necessities to run fudge program
-	// if the environment is not suitable to run fudge, it will return an error which contains the error message
 	CheckAll() error
 }
 
 type groundCheckImpl struct {
-	sysUtils utils.System
+	c checkers.Checkers
 }
 
 func (g *groundCheckImpl) CheckAll() error {
-	// Check whether the we are in sudo environment or not
-	if !g.sysUtils.IsSudo() {
-		return errNotSudo
+	var errRes error
+
+	// we are splitting all the ifs because we want all checks to always run as they will provide nice messages
+
+	if !g.c.CheckSudo() {
+		errRes = errCheckAllFailed
 	}
-	return nil
+
+	if !g.c.CheckLibcapDevPkg() {
+		errRes = errCheckAllFailed
+	}
+
+	if !g.c.CheckIsolateBinary() {
+		errRes = errCheckAllFailed
+	}
+
+	return errRes
 }

@@ -69,6 +69,53 @@ func TestOsFunctionsImpl_Open(t *testing.T) {
 	assert.Equal(t, errors.New("name: name1"), err)
 }
 
+func TestOsFunctionsImpl_UserHomeDir(t *testing.T) {
+	// mock osUserHomeDir
+	originalOSUserHomeDir := osUserHomeDir
+	osUserHomeDir = func() (s string, e error) {
+		return "home", nil
+	}
+	defer func() {
+		osUserHomeDir = originalOSUserHomeDir
+	}()
+
+	obj := osFunctionsImpl{}
+	res, err := obj.UserHomeDir()
+	assert.Nil(t, err)
+	assert.Equal(t, "home", res)
+}
+
+func TestOsFunctionsImpl_Stat(t *testing.T) {
+	// mock osStat
+	originalOSStat := osStat
+	osStat = func(name string) (info os.FileInfo, e error) {
+		return nil, errors.New(name)
+	}
+	defer func() {
+		osStat = originalOSStat
+	}()
+
+	obj := osFunctionsImpl{}
+	res, err := obj.Stat("woi")
+	assert.Nil(t, res)
+	assert.Equal(t, errors.New("woi"), err)
+}
+
+func TestOsFunctionsImpl_IsNotExist(t *testing.T) {
+	// mock osIsNotExist
+	originalOSIsNotExist := osIsNotExist
+	osIsNotExist = func(err error) bool {
+		return true
+	}
+	defer func() {
+		osIsNotExist = originalOSIsNotExist
+	}()
+
+	obj := osFunctionsImpl{}
+	res := obj.IsNotExist(nil)
+	assert.True(t, res)
+}
+
 func TestProvideOSFunctions(t *testing.T) {
 	assert.Implements(t, (*OSFunctions)(nil), ProvideOSFunctions())
 }

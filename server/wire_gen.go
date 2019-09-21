@@ -7,6 +7,7 @@ package server
 
 import (
 	"gitlab.com/sandykarunia/fudge/groundcheck"
+	"gitlab.com/sandykarunia/fudge/groundcheck/checkers"
 	"gitlab.com/sandykarunia/fudge/sdk"
 	"gitlab.com/sandykarunia/fudge/utils"
 )
@@ -15,8 +16,12 @@ import (
 
 func Instance() Server {
 	osFunctions := sdk.ProvideOSFunctions()
-	system := utils.ProvideSystem(osFunctions)
-	groundCheck := groundcheck.Provider(system)
+	execFunctions := sdk.ProvideExecFunctions()
+	system := utils.ProvideSystem(osFunctions, execFunctions)
+	ioFunctions := sdk.ProvideIOFunctions()
+	file := utils.ProvideFile(ioFunctions, osFunctions)
+	checkersCheckers := checkers.Provider(system, file)
+	groundCheck := groundcheck.Provider(checkersCheckers)
 	server := Provider(groundCheck)
 	return server
 }
