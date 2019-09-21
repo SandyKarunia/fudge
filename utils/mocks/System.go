@@ -8,6 +8,20 @@ type System struct {
 	mock.Mock
 }
 
+// GetFudgeDir provides a mock function with given fields:
+func (_m *System) GetFudgeDir() string {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
 // IsSudo provides a mock function with given fields:
 func (_m *System) IsSudo() bool {
 	ret := _m.Called()
@@ -17,6 +31,20 @@ func (_m *System) IsSudo() bool {
 		r0 = rf()
 	} else {
 		r0 = ret.Get(0).(bool)
+	}
+
+	return r0
+}
+
+// VerifyPkgInstalled provides a mock function with given fields: pkgName
+func (_m *System) VerifyPkgInstalled(pkgName string) error {
+	ret := _m.Called(pkgName)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string) error); ok {
+		r0 = rf(pkgName)
+	} else {
+		r0 = ret.Error(0)
 	}
 
 	return r0

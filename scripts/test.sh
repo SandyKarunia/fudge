@@ -11,7 +11,7 @@ print_title() {
 }
 
 print_title "Running tests..."
-go test -v -cover -race -coverprofile .coverage.out ./...
+go test -cover -race -coverprofile .coverage.out ./...
 go tool cover -func .coverage.out
 
 print_title "Running go fmt..."

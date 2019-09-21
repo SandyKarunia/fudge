@@ -5,10 +5,13 @@ import (
 )
 
 var (
-	osOpen    = os.Open
-	osCreate  = os.Create
-	osGeteuid = os.Geteuid
-	osGetenv  = os.Getenv
+	osOpen        = os.Open
+	osCreate      = os.Create
+	osGeteuid     = os.Geteuid
+	osGetenv      = os.Getenv
+	osUserHomeDir = os.UserHomeDir
+	osStat        = os.Stat
+	osIsNotExist  = os.IsNotExist
 )
 
 // OSFunctions is an interface that represents os library in golang sdk
@@ -18,6 +21,9 @@ type OSFunctions interface {
 	Create(name string) (*os.File, error)
 	Geteuid() int
 	Getenv(key string) string
+	UserHomeDir() (string, error)
+	Stat(name string) (os.FileInfo, error)
+	IsNotExist(err error) bool
 }
 
 type osFunctionsImpl struct{}
@@ -36,6 +42,18 @@ func (o *osFunctionsImpl) Geteuid() int {
 
 func (o *osFunctionsImpl) Getenv(key string) string {
 	return osGetenv(key)
+}
+
+func (o *osFunctionsImpl) UserHomeDir() (string, error) {
+	return osUserHomeDir()
+}
+
+func (o *osFunctionsImpl) Stat(name string) (os.FileInfo, error) {
+	return osStat(name)
+}
+
+func (o *osFunctionsImpl) IsNotExist(err error) bool {
+	return osIsNotExist(err)
 }
 
 // ProvideOSFunctions ...

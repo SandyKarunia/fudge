@@ -2,37 +2,52 @@ package groundcheck
 
 import (
 	"github.com/stretchr/testify/assert"
-	"gitlab.com/sandykarunia/fudge/utils/mocks"
+	"gitlab.com/sandykarunia/fudge/groundcheck/checkers/mocks"
 	"testing"
 )
 
 func TestGroundCheckImpl_CheckAll(t *testing.T) {
 	tests := []struct {
-		desc   string
-		isSudo bool
-		want   error
+		desc               string
+		checkSudo          bool
+		checkLibcapDevPkg  bool
+		checkIsolateBinary bool
+		want               error
 	}{
 		{
-			desc:   "It's in sudo environment",
-			isSudo: true,
-			want:   nil,
+			desc:               "check sudo is false",
+			checkSudo:          false,
+			checkLibcapDevPkg:  true,
+			checkIsolateBinary: true,
+			want:               errCheckAllFailed,
 		},
 		{
-			desc:   "It's not in sudo environment",
-			isSudo: false,
-			want:   errNotSudo,
+			desc:               "check sudo is true, rest is false",
+			checkSudo:          true,
+			checkLibcapDevPkg:  false,
+			checkIsolateBinary: false,
+			want:               errCheckAllFailed,
+		},
+		{
+			desc:               "all true",
+			checkSudo:          true,
+			checkLibcapDevPkg:  true,
+			checkIsolateBinary: true,
+			want:               nil,
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.desc, func(t *testing.T) {
-			mockSysUtils := &mocks.System{}
-			gc := &groundCheckImpl{sysUtils: mockSysUtils}
+			mockCheckers := &mocks.Checkers{}
 
-			mockSysUtils.On("IsSudo").Return(test.isSudo)
+			mockCheckers.On("CheckSudo").Return(test.checkSudo)
+			mockCheckers.On("CheckLibcapDevPkg").Return(test.checkLibcapDevPkg)
+			mockCheckers.On("CheckIsolateBinary").Return(test.checkIsolateBinary)
 
-			res := gc.CheckAll()
-			assert.Equal(t, test.want, res, test.want)
+			obj := &groundCheckImpl{c: mockCheckers}
+			res := obj.CheckAll()
+			assert.Equal(t, test.want, res, test.desc)
 		})
 	}
 }

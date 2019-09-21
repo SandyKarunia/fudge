@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestFileUtilsImpl_Copy(t *testing.T) {
+func TestFileImpl_Copy(t *testing.T) {
 	tests := []struct {
 		openErr     error
 		createErr   error
@@ -64,6 +64,48 @@ func TestFileUtilsImpl_Copy(t *testing.T) {
 			ret := obj.Copy(paramSrc, paramDest)
 
 			assert.Equal(t, test.wantReturn, ret)
+		})
+	}
+}
+
+func TestFileImpl_Exists(t *testing.T) {
+	tests := []struct {
+		desc          string
+		fileInfoIsDir bool
+		isNotExist    bool
+		want          bool
+	}{
+		{
+			desc:       "file does not exist",
+			want:       false,
+			isNotExist: true,
+		},
+		{
+			desc:          "file exists, but is a directory",
+			want:          false,
+			isNotExist:    false,
+			fileInfoIsDir: true,
+		},
+		{
+			desc:          "file exists, and not a directory",
+			want:          true,
+			isNotExist:    false,
+			fileInfoIsDir: false,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.desc, func(t *testing.T) {
+			osMock := &mocks.OSFunctions{}
+			fileInfoMock := &mocks.FileInfo{}
+
+			osMock.On("Stat", "the-path").Return(fileInfoMock, nil)
+			osMock.On("IsNotExist", mock.Anything).Return(test.isNotExist)
+			fileInfoMock.On("IsDir").Return(test.fileInfoIsDir)
+
+			obj := &fileImpl{os: osMock}
+			res := obj.Exists("the-path")
+			assert.Equal(t, test.want, res)
 		})
 	}
 }

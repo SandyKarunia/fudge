@@ -9,6 +9,9 @@ import (
 type File interface {
 	// Copy copies a file from source to destination
 	Copy(src, dest string) error
+
+	// Exists check if the path exists AND it is a file
+	Exists(path string) bool
 }
 
 type fileImpl struct {
@@ -33,6 +36,19 @@ func (f *fileImpl) Copy(src, dest string) error {
 
 	_, err = f.io.Copy(destination, source)
 	return err
+}
+
+func (f *fileImpl) Exists(path string) bool {
+	info, err := f.os.Stat(path)
+
+	if f.os.IsNotExist(err) {
+		return false
+	}
+	if info.IsDir() {
+		return false
+	}
+
+	return true
 }
 
 // ProvideFile ...
