@@ -23,22 +23,20 @@ type groundCheckImpl struct {
 func (g *groundCheckImpl) CheckAll() error {
 	var errRes error
 
-	// we are splitting all the ifs because we want all checks to always run as they will provide nice messages
-
-	if !g.c.CheckSudo() {
-		errRes = errCheckAllFailed
+	var checkerFuncs = []func() bool{
+		g.c.CheckSudo,
+		g.c.CheckLibcapDevPkg,
+		g.c.CheckIsolateBinaryExists,
+		g.c.CheckIsolateBinaryExecutable,
 	}
 
-	if !g.c.CheckLibcapDevPkg() {
-		errRes = errCheckAllFailed
-	}
+	// we don't want to interrupt the checks (i.e. put return inside the loop)
+	// because we want the loop to keep going, as the functions will provide nice messages
 
-	if !g.c.CheckIsolateBinaryExists() {
-		errRes = errCheckAllFailed
-	}
-
-	if !g.c.CheckIsolateBinaryExecutable() {
-		errRes = errCheckAllFailed
+	for _, f := range checkerFuncs {
+		if !f() {
+			errRes = errCheckAllFailed
+		}
 	}
 
 	return errRes

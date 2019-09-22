@@ -92,11 +92,13 @@ func TestCheckersImpl_CheckIsolateBinaryExists(t *testing.T) {
 		t.Run(test.desc, func(t *testing.T) {
 			sysMock := &mocks.System{}
 			fileMock := &mocks.File{}
+			pathMock := &mocks.Path{}
 
 			sysMock.On("GetFudgeDir").Return(test.fudgeDir)
-			fileMock.On("Exists", test.fudgeDir+"isolate").Return(test.fileExists)
+			fileMock.On("Exists", "isolate path").Return(test.fileExists)
+			pathMock.On("IsolateBinary").Return("isolate path")
 
-			obj := &checkersImpl{sysUtils: sysMock, fileUtils: fileMock}
+			obj := &checkersImpl{sysUtils: sysMock, fileUtils: fileMock, pathUtils: pathMock}
 			res := obj.CheckIsolateBinaryExists()
 			assert.Equal(t, test.want, res)
 		})
@@ -107,30 +109,28 @@ func TestCheckersImpl_CheckIsolateBinaryExecutable(t *testing.T) {
 	tests := []struct {
 		desc       string
 		want       bool
-		fudgeDir   string
 		executeErr error
 	}{
 		{
 			desc:       "execute returns error",
 			want:       false,
-			fudgeDir:   "lalala",
 			executeErr: errors.New("err"),
 		},
 		{
 			desc:       "execute does not return error",
 			want:       true,
-			fudgeDir:   "~fudge",
 			executeErr: nil,
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.desc, func(t *testing.T) {
+			mockPath := &mocks.Path{}
+			mockPath.On("IsolateBinary").Return("isolatePath")
 			mockSys := &mocks.System{}
-			mockSys.On("GetFudgeDir").Return(test.fudgeDir)
-			mockSys.On("Execute", test.fudgeDir+"isolate", "--version").Return("", test.executeErr)
+			mockSys.On("Execute", "isolatePath", "--version").Return("", test.executeErr)
 
-			obj := &checkersImpl{sysUtils: mockSys}
+			obj := &checkersImpl{sysUtils: mockSys, pathUtils: mockPath}
 			res := obj.CheckIsolateBinaryExecutable()
 			assert.Equal(t, test.want, res)
 		})

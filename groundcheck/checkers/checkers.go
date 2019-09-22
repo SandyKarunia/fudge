@@ -31,6 +31,7 @@ type Checkers interface {
 type checkersImpl struct {
 	sysUtils  utils.System
 	fileUtils utils.File
+	pathUtils utils.Path
 }
 
 func (c *checkersImpl) CheckSudo() bool {
@@ -65,8 +66,8 @@ func (c *checkersImpl) CheckLibcapDevPkg() bool {
 }
 
 func (c *checkersImpl) CheckIsolateBinaryExists() bool {
+	isolatePath := c.pathUtils.IsolateBinary()
 	fudgeDir := c.sysUtils.GetFudgeDir()
-	isolatePath := fudgeDir + "isolate"
 	msg := &message{
 		success: "Required isolate binary found in " + isolatePath,
 		fail:    "Required isolate binary not found in " + isolatePath,
@@ -77,7 +78,7 @@ func (c *checkersImpl) CheckIsolateBinaryExists() bool {
 			"extract the source code anywhere you want",
 			"inside the extracted folder, run \"make isolate\" in command line, this requires libcap-dev library",
 			"there should be a generated binary \"isolate\"",
-			"move \"isolate\" binary to " + fudgeDir + " directory",
+			"copy \"isolate\" binary into " + fudgeDir + " directory",
 		},
 	}
 	exists := c.fileUtils.Exists(isolatePath)
@@ -86,7 +87,7 @@ func (c *checkersImpl) CheckIsolateBinaryExists() bool {
 }
 
 func (c *checkersImpl) CheckIsolateBinaryExecutable() bool {
-	isolatePath := c.sysUtils.GetFudgeDir() + "isolate"
+	isolatePath := c.pathUtils.IsolateBinary()
 	msg := &message{
 		success: "Required isolate binary is executable",
 		fail:    "Required isolate binary is not executable",

@@ -20,7 +20,8 @@ func Instance() Server {
 	system := utils.ProvideSystem(osFunctions, execFunctions)
 	ioFunctions := sdk.ProvideIOFunctions()
 	file := utils.ProvideFile(ioFunctions, osFunctions)
-	checkersCheckers := checkers.Provider(system, file)
+	path := utils.ProvidePath(system)
+	checkersCheckers := checkers.Provider(system, file, path)
 	groundCheck := groundcheck.Provider(checkersCheckers)
 	server := Provider(groundCheck)
 	return server
