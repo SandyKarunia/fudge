@@ -1,6 +1,8 @@
 package server
 
-import "gitlab.com/sandykarunia/fudge/groundcheck"
+import (
+	"gitlab.com/sandykarunia/fudge/groundcheck"
+)
 
 // Provider ...
 func Provider(gc groundcheck.GroundCheck) Server {

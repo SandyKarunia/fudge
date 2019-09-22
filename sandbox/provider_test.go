@@ -1,4 +1,4 @@
-package checkers
+package sandbox
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -6,5 +6,5 @@ import (
 )
 
 func TestProvider(t *testing.T) {
-	assert.Implements(t, (*Checkers)(nil), Provider(nil, nil, nil))
+	assert.Implements(t, (*Factory)(nil), Provider(nil))
 }

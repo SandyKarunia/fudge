@@ -12,7 +12,11 @@ import (
 
 func Instance() Server {
 	wire.Build(
-		Provider, groundcheck.Provider, checkers.Provider, utils.Providers, sdk.Providers,
+		Provider,
+		checkers.Provider,
+		groundcheck.Provider,
+		sdk.Providers,
+		utils.Providers,
 	)
 	return &serverImpl{}
 }
