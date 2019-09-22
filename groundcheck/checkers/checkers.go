@@ -20,8 +20,12 @@ type Checkers interface {
 	// CheckLibcapDevPkg Checks whether libcap-dev package is installed or not
 	CheckLibcapDevPkg() bool
 
-	// CheckIsolateBinary Checks whether isolate binary exists or not
-	CheckIsolateBinary() bool
+	// CheckIsolateBinaryExists Checks whether isolate binary exists or not
+	CheckIsolateBinaryExists() bool
+
+	// CheckIsolateBinaryExecutable Checks whether isolate binary is real or not
+	// we do this by checking the version of the isolate binary
+	CheckIsolateBinaryExecutable() bool
 }
 
 type checkersImpl struct {
@@ -60,7 +64,7 @@ func (c *checkersImpl) CheckLibcapDevPkg() bool {
 	return err == nil
 }
 
-func (c *checkersImpl) CheckIsolateBinary() bool {
+func (c *checkersImpl) CheckIsolateBinaryExists() bool {
 	fudgeDir := c.sysUtils.GetFudgeDir()
 	isolatePath := fudgeDir + "isolate"
 	msg := &message{
@@ -79,6 +83,25 @@ func (c *checkersImpl) CheckIsolateBinary() bool {
 	exists := c.fileUtils.Exists(isolatePath)
 	printPretty(exists, msg)
 	return exists
+}
+
+func (c *checkersImpl) CheckIsolateBinaryExecutable() bool {
+	isolatePath := c.sysUtils.GetFudgeDir() + "isolate"
+	msg := &message{
+		success: "Required isolate binary is executable",
+		fail:    "Required isolate binary is not executable",
+		solve: []string{
+			"make sure the isolate binary is executable by running '" + isolatePath + " --version' in your command line",
+		},
+	}
+
+	_, err := c.sysUtils.Execute(isolatePath, "--version")
+	if err != nil {
+		// TODO log error
+	}
+
+	printPretty(err == nil, msg)
+	return err == nil
 }
 
 // a helper function to print pretty message specific to groundcheck

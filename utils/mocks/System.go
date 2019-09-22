@@ -8,6 +8,34 @@ type System struct {
 	mock.Mock
 }
 
+// Execute provides a mock function with given fields: cmd, args
+func (_m *System) Execute(cmd string, args ...string) (string, error) {
+	_va := make([]interface{}, len(args))
+	for _i := range args {
+		_va[_i] = args[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, cmd)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func(string, ...string) string); ok {
+		r0 = rf(cmd, args...)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string, ...string) error); ok {
+		r1 = rf(cmd, args...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetFudgeDir provides a mock function with given fields:
 func (_m *System) GetFudgeDir() string {
 	ret := _m.Called()

@@ -8,8 +8,22 @@ type Checkers struct {
 	mock.Mock
 }
 
-// CheckIsolateBinary provides a mock function with given fields:
-func (_m *Checkers) CheckIsolateBinary() bool {
+// CheckIsolateBinaryExecutable provides a mock function with given fields:
+func (_m *Checkers) CheckIsolateBinaryExecutable() bool {
+	ret := _m.Called()
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func() bool); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	return r0
+}
+
+// CheckIsolateBinaryExists provides a mock function with given fields:
+func (_m *Checkers) CheckIsolateBinaryExists() bool {
 	ret := _m.Called()
 
 	var r0 bool

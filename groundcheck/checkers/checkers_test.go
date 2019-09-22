@@ -67,7 +67,7 @@ func TestCheckersImpl_CheckLibcapDevPkg(t *testing.T) {
 	}
 }
 
-func TestCheckersImpl_CheckIsolateBinary(t *testing.T) {
+func TestCheckersImpl_CheckIsolateBinaryExists(t *testing.T) {
 	tests := []struct {
 		desc       string
 		want       bool
@@ -97,7 +97,41 @@ func TestCheckersImpl_CheckIsolateBinary(t *testing.T) {
 			fileMock.On("Exists", test.fudgeDir+"isolate").Return(test.fileExists)
 
 			obj := &checkersImpl{sysUtils: sysMock, fileUtils: fileMock}
-			res := obj.CheckIsolateBinary()
+			res := obj.CheckIsolateBinaryExists()
+			assert.Equal(t, test.want, res)
+		})
+	}
+}
+
+func TestCheckersImpl_CheckIsolateBinaryExecutable(t *testing.T) {
+	tests := []struct {
+		desc       string
+		want       bool
+		fudgeDir   string
+		executeErr error
+	}{
+		{
+			desc:       "execute returns error",
+			want:       false,
+			fudgeDir:   "lalala",
+			executeErr: errors.New("err"),
+		},
+		{
+			desc:       "execute does not return error",
+			want:       true,
+			fudgeDir:   "~fudge",
+			executeErr: nil,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.desc, func(t *testing.T) {
+			mockSys := &mocks.System{}
+			mockSys.On("GetFudgeDir").Return(test.fudgeDir)
+			mockSys.On("Execute", test.fudgeDir+"isolate", "--version").Return("", test.executeErr)
+
+			obj := &checkersImpl{sysUtils: mockSys}
+			res := obj.CheckIsolateBinaryExecutable()
 			assert.Equal(t, test.want, res)
 		})
 	}

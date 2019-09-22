@@ -17,6 +17,9 @@ type System interface {
 
 	// GetFudgeDir returns config directory for all fudge related stuff, always ends with "/"
 	GetFudgeDir() string
+
+	// Execute executes a command, and return the output (stdout + stderr) and error
+	Execute(cmd string, args ...string) (string, error)
 }
 
 type systemImpl struct {
@@ -54,6 +57,12 @@ func (o *systemImpl) GetFudgeDir() string {
 	}
 
 	return homeDir + ".fudge/"
+}
+
+func (o *systemImpl) Execute(name string, args ...string) (string, error) {
+	cmd := o.exec.Command(name, args...)
+	out, err := cmd.CombinedOutput()
+	return string(out), err
 }
 
 // ProvideSystem ...

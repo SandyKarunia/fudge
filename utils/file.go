@@ -10,7 +10,7 @@ type File interface {
 	// Copy copies a file from source to destination
 	Copy(src, dest string) error
 
-	// Exists check if the path exists AND it is a file
+	// Exists checks if the path exists AND it is a file
 	Exists(path string) bool
 }
 

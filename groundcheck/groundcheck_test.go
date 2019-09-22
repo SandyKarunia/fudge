@@ -8,32 +8,35 @@ import (
 
 func TestGroundCheckImpl_CheckAll(t *testing.T) {
 	tests := []struct {
-		desc               string
-		checkSudo          bool
-		checkLibcapDevPkg  bool
-		checkIsolateBinary bool
-		want               error
+		desc                         string
+		checkSudo                    bool
+		checkLibcapDevPkg            bool
+		checkIsolateBinaryExists     bool
+		checkIsolateBinaryExecutable bool
+		want                         error
 	}{
 		{
-			desc:               "check sudo is false",
-			checkSudo:          false,
-			checkLibcapDevPkg:  true,
-			checkIsolateBinary: true,
-			want:               errCheckAllFailed,
+			desc:                         "check sudo is false",
+			checkSudo:                    false,
+			checkLibcapDevPkg:            true,
+			checkIsolateBinaryExists:     true,
+			checkIsolateBinaryExecutable: true,
+			want:                         errCheckAllFailed,
 		},
 		{
-			desc:               "check sudo is true, rest is false",
-			checkSudo:          true,
-			checkLibcapDevPkg:  false,
-			checkIsolateBinary: false,
-			want:               errCheckAllFailed,
+			desc:                     "check sudo is true, rest is false",
+			checkSudo:                true,
+			checkLibcapDevPkg:        false,
+			checkIsolateBinaryExists: false,
+			want:                     errCheckAllFailed,
 		},
 		{
-			desc:               "all true",
-			checkSudo:          true,
-			checkLibcapDevPkg:  true,
-			checkIsolateBinary: true,
-			want:               nil,
+			desc:                         "all true",
+			checkSudo:                    true,
+			checkLibcapDevPkg:            true,
+			checkIsolateBinaryExists:     true,
+			checkIsolateBinaryExecutable: true,
+			want:                         nil,
 		},
 	}
 
@@ -43,7 +46,8 @@ func TestGroundCheckImpl_CheckAll(t *testing.T) {
 
 			mockCheckers.On("CheckSudo").Return(test.checkSudo)
 			mockCheckers.On("CheckLibcapDevPkg").Return(test.checkLibcapDevPkg)
-			mockCheckers.On("CheckIsolateBinary").Return(test.checkIsolateBinary)
+			mockCheckers.On("CheckIsolateBinaryExists").Return(test.checkIsolateBinaryExists)
+			mockCheckers.On("CheckIsolateBinaryExecutable").Return(test.checkIsolateBinaryExecutable)
 
 			obj := &groundCheckImpl{c: mockCheckers}
 			res := obj.CheckAll()

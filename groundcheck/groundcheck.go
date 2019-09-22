@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	errCheckAllFailed = errors.New("at least one check failed")
+	errCheckAllFailed = errors.New("groundcheck: at least one check failed")
 )
 
 // GroundCheck is an entity that checks the machines where the program will run
@@ -33,7 +33,11 @@ func (g *groundCheckImpl) CheckAll() error {
 		errRes = errCheckAllFailed
 	}
 
-	if !g.c.CheckIsolateBinary() {
+	if !g.c.CheckIsolateBinaryExists() {
+		errRes = errCheckAllFailed
+	}
+
+	if !g.c.CheckIsolateBinaryExecutable() {
 		errRes = errCheckAllFailed
 	}
 
