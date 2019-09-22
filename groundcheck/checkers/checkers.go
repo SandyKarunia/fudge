@@ -92,6 +92,7 @@ func (c *checkersImpl) CheckIsolateBinaryExecutable() bool {
 		fail:    "Required isolate binary is not executable",
 		solve: []string{
 			"make sure the isolate binary is executable by running '" + isolatePath + " --version' in your command line",
+			"if you got permission denied error, try running 'chmod +x " + isolatePath + "'",
 		},
 	}
 
