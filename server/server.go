@@ -2,10 +2,10 @@ package server
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"gitlab.com/sandykarunia/fudge/groundcheck"
+	"gitlab.com/sandykarunia/fudge/server/handler"
 	"log"
 	"net/http"
 	"os"
@@ -32,7 +32,8 @@ func (s *serverImpl) Start() {
 	defaultPort := 8080
 
 	r := mux.NewRouter()
-	r.HandleFunc("/health_check", healthCheckHandler)
+	r.HandleFunc("/health_check", handler.HealthCheck)
+	r.HandleFunc("/grade", handler.Grade).Methods(http.MethodPost)
 
 	addr := fmt.Sprintf("0.0.0.0:%d", defaultPort)
 	srv := &http.Server{
@@ -71,11 +72,4 @@ func (s *serverImpl) Start() {
 	// to finalize based on context cancellation.
 	log.Println("shutting down")
 	os.Exit(0)
-}
-
-func healthCheckHandler(w http.ResponseWriter, req *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(map[string]bool{
-		"healthy": true,
-	})
 }
