@@ -3,11 +3,9 @@ steps:
     args: ['version']
     env: ['PROJECT_ROOT=github.com/sandykarunia/fudge']
   - name: 'gcr.io/cloud-builders/go'
-    args:
-      - github.com/google/subcommands
-    env: ['PROJECT_ROOT=github.com/sandykarunia/fudge']
-  - name: 'gcr.io/cloud-builders/go'
-    args: ['get', '-t', '-v', './...']
+    args: ['get', '-t', '-v', '-d',
+           'github.com/google/subcommands',
+           './...']
     env: ['PROJECT_ROOT=github.com/sandykarunia/fudge']
   - name: 'gcr.io/cloud-builders/go'
     args: ['./scripts/test.sh']
