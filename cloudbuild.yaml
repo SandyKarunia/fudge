@@ -1,0 +1,7 @@
+steps:
+  - name: 'gcr.io/cloud-builders/go'
+    args: ['install', '.']
+  - name: 'gcr.io/cloud-builders/go'
+    args: ['./scripts/test.sh']
+  - name: 'gcr.io/cloud-builders/go'
+    args: ['./scripts/build.sh']
