@@ -1,0 +1,12 @@
+steps:
+  - name: 'gcr.io/cloud-builders/go'
+    args: ['get', '-t', '-v', '-d', '-u',
+           'github.com/google/wire/cmd/wire',
+           './...']
+    env: ['PROJECT_ROOT=github.com/sandykarunia/fudge']
+  - name: 'gcr.io/cloud-builders/go'
+    args: ['./scripts/test.sh']
+    env: ['PROJECT_ROOT=github.com/sandykarunia/fudge']
+  - name: 'gcr.io/cloud-builders/go'
+    args: ['./scripts/build.sh']
+    env: ['PROJECT_ROOT=github.com/sandykarunia/fudge']
