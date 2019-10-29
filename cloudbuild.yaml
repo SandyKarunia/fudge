@@ -4,7 +4,7 @@ steps:
     env: ['PROJECT_ROOT=github.com/sandykarunia/fudge']
   - name: 'gcr.io/cloud-builders/go'
     args: ['get', '-t', '-v', '-d',
-           'github.com/google/subcommands',
+           'github.com/google/wire/cmd/wire',
            './...']
     env: ['PROJECT_ROOT=github.com/sandykarunia/fudge']
   - name: 'gcr.io/cloud-builders/go'
