@@ -3,10 +3,10 @@ steps:
     args: ['get', '-t', '-v', '-d',
            'github.com/google/wire/cmd/wire',
            './...']
-    env: ['GOPATH=/gopath']
+    env: ['PROJECT_ROOT=github.com/sandykarunia/fudge']
   - name: 'gcr.io/cloud-builders/go'
     args: ['./scripts/test.sh']
-    env: ['GOPATH=/gopath']
+    env: ['PROJECT_ROOT=github.com/sandykarunia/fudge']
   - name: 'gcr.io/cloud-builders/go'
     args: ['./scripts/build.sh']
-    env: ['GOPATH=/gopath']
+    env: ['PROJECT_ROOT=github.com/sandykarunia/fudge']
