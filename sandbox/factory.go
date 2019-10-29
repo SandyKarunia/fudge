@@ -1,7 +1,7 @@
 package sandbox
 
 import (
-	"gitlab.com/sandykarunia/fudge/utils"
+	"github.com/sandykarunia/fudge/utils"
 	"math/rand"
 )
 

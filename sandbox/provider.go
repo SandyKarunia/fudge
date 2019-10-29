@@ -1,6 +1,6 @@
 package sandbox
 
-import "gitlab.com/sandykarunia/fudge/utils"
+import "github.com/sandykarunia/fudge/utils"
 
 // Provider ...
 func Provider(path utils.Path) Factory {

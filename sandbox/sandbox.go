@@ -2,7 +2,7 @@ package sandbox
 
 import (
 	"fmt"
-	"gitlab.com/sandykarunia/fudge/utils"
+	"github.com/sandykarunia/fudge/utils"
 	"os"
 )
 

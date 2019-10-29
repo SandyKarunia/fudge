@@ -2,7 +2,7 @@ package utils
 
 import (
 	"github.com/stretchr/testify/assert"
-	"gitlab.com/sandykarunia/fudge/utils/mocks"
+	"github.com/sandykarunia/fudge/utils/mocks"
 	"testing"
 )
 

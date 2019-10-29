@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"github.com/stretchr/testify/assert"
-	"gitlab.com/sandykarunia/fudge/sdk/mocks"
+	"github.com/sandykarunia/fudge/sdk/mocks"
 	"os/exec"
 	"testing"
 )

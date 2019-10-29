@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"gitlab.com/sandykarunia/fudge/sdk/mocks"
+	"github.com/sandykarunia/fudge/sdk/mocks"
 	"os"
 	"testing"
 )

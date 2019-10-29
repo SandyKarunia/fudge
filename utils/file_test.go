@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"gitlab.com/sandykarunia/fudge/sdk/mocks"
+	"github.com/sandykarunia/fudge/sdk/mocks"
 	"os"
 	"testing"
 )

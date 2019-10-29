@@ -6,10 +6,10 @@
 package server
 
 import (
-	"gitlab.com/sandykarunia/fudge/groundcheck"
-	"gitlab.com/sandykarunia/fudge/groundcheck/checkers"
-	"gitlab.com/sandykarunia/fudge/sdk"
-	"gitlab.com/sandykarunia/fudge/utils"
+	"github.com/sandykarunia/fudge/groundcheck"
+	"github.com/sandykarunia/fudge/groundcheck/checkers"
+	"github.com/sandykarunia/fudge/sdk"
+	"github.com/sandykarunia/fudge/utils"
 )
 
 // Injectors from server_wire.go:

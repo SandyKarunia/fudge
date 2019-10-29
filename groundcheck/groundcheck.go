@@ -2,7 +2,7 @@ package groundcheck
 
 import (
 	"errors"
-	"gitlab.com/sandykarunia/fudge/groundcheck/checkers"
+	"github.com/sandykarunia/fudge/groundcheck/checkers"
 )
 
 var (

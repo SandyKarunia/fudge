@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"gitlab.com/sandykarunia/fudge/sdk"
+	"github.com/sandykarunia/fudge/sdk"
 )
 
 // File ...

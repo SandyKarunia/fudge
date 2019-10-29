@@ -1,6 +1,6 @@
 package logger
 
-import "gitlab.com/sandykarunia/fudge/sdk"
+import "github.com/sandykarunia/fudge/sdk"
 
 // ProvideStdLogger ...
 func ProvideStdLogger(fmt sdk.FmtFunctions) Logger {

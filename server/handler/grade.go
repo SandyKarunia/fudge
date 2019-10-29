@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/go-playground/pure"
 	"github.com/google/uuid"
-	"gitlab.com/sandykarunia/fudge/grader"
+	"github.com/sandykarunia/fudge/grader"
 	"net/http"
 	"regexp"
 )

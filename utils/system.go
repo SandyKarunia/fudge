@@ -2,7 +2,7 @@ package utils
 
 import (
 	"errors"
-	"gitlab.com/sandykarunia/fudge/sdk"
+	"github.com/sandykarunia/fudge/sdk"
 	"strings"
 )
 

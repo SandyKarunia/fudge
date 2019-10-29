@@ -2,7 +2,7 @@ package groundcheck
 
 import (
 	"github.com/stretchr/testify/assert"
-	"gitlab.com/sandykarunia/fudge/groundcheck/checkers/mocks"
+	"github.com/sandykarunia/fudge/groundcheck/checkers/mocks"
 	"testing"
 )
 

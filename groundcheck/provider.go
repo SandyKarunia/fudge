@@ -1,6 +1,6 @@
 package groundcheck
 
-import "gitlab.com/sandykarunia/fudge/groundcheck/checkers"
+import "github.com/sandykarunia/fudge/groundcheck/checkers"
 
 // Provider ...
 func Provider(checkers checkers.Checkers) GroundCheck {

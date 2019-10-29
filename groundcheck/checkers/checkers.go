@@ -2,7 +2,7 @@ package checkers
 
 import (
 	"github.com/fatih/color"
-	"gitlab.com/sandykarunia/fudge/utils"
+	"github.com/sandykarunia/fudge/utils"
 )
 
 type message struct {

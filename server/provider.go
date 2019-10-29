@@ -1,7 +1,7 @@
 package server
 
 import (
-	"gitlab.com/sandykarunia/fudge/groundcheck"
+	"github.com/sandykarunia/fudge/groundcheck"
 )
 
 // Provider ...

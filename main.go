@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gitlab.com/sandykarunia/fudge/server"
+	"github.com/sandykarunia/fudge/server"
 	"math/rand"
 	"time"
 )
