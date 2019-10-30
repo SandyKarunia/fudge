@@ -6,6 +6,12 @@ commands:
     steps:
       - run: echo 'export GOPATH="/gopath"' >> $BASH_ENV
       - run: echo 'export GO_PROJECT_DIR="${GOPATH}/src/github.com/sandykarunia/fudge"' >> $BASH_ENV
+  before_script:
+    description: "Do necessary actions before running a script inside scripts/ folder"
+    steps:
+      - set_env
+      - attach_workspace:
+          at: /
 
 jobs:
   prepare:
@@ -30,18 +36,14 @@ jobs:
     docker:
       - image: golang:1.12
     steps:
-      - set_env
-      - attach_workspace:
-          at: /
-      - run: cd ${GO_PROJECT_DIR}
-      - run: ./scripts/test.sh
+      - before_script
+      - run: cd ${GO_PROJECT_DIR} && ./scripts/test.sh
   build:
     docker:
       - image: golang:1.12
     steps:
-      - set_env
-      - run: cd ${GO_PROJECT_DIR}
-      - run: ./scripts/build.sh
+      - before_script
+      - run: cd ${GO_PROJECT_DIR} && ./scripts/build.sh
 
 workflows:
   default_wf:
@@ -52,5 +54,5 @@ workflows:
             - prepare
       - build:
           requires:
-            - prepare
+            - test
 
