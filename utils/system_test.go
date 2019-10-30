@@ -3,8 +3,8 @@ package utils
 import (
 	"bytes"
 	"errors"
-	"github.com/stretchr/testify/assert"
 	"github.com/sandykarunia/fudge/sdk/mocks"
+	"github.com/stretchr/testify/assert"
 	"os/exec"
 	"testing"
 )

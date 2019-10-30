@@ -5,7 +5,7 @@ commands:
     description: "Set up necessary environment variables"
     steps:
       - run: echo 'export GOPATH="/gopath"' >> $BASH_ENV
-      - run: echo 'export GO_PROJECT_DIR="${GOPATH}/src/github.com/sandykarunia/fudge"' >> $BASH_ENV
+      - run: echo 'export FUDGE_PROJECT_DIR="${GOPATH}/src/github.com/sandykarunia/fudge"' >> $BASH_ENV
   before_script:
     description: "Do necessary actions before running a script inside scripts/ folder"
     steps:
@@ -21,10 +21,10 @@ jobs:
     steps:
       - checkout
       - set_env
-      - run: mkdir -pv "${GO_PROJECT_DIR}"
-      - run: cp -rv ${CIRCLE_WORKING_DIRECTORY}/. ${GO_PROJECT_DIR}
-      - run: chmod -v +x ${GO_PROJECT_DIR}/scripts/*
-      - run: cd ${GO_PROJECT_DIR} && go get -t -v -d ./...
+      - run: mkdir -pv "${FUDGE_PROJECT_DIR}"
+      - run: cp -rv ${CIRCLE_WORKING_DIRECTORY}/. ${FUDGE_PROJECT_DIR}
+      - run: chmod -v +x ${FUDGE_PROJECT_DIR}/scripts/*
+      - run: cd ${FUDGE_PROJECT_DIR} && go get -t -v -d ./...
       - run: go get -u -v golang.org/x/lint/golint github.com/google/wire
       - persist_to_workspace:
           root: /
@@ -35,13 +35,17 @@ jobs:
       - image: golang:1.12
     steps:
       - before_script
-      - run: cd ${GO_PROJECT_DIR} && ./scripts/test.sh
+      - run: cd ${FUDGE_PROJECT_DIR} && ./scripts/test.sh
   build:
     docker:
       - image: golang:1.12
+    environment: 
+      FUDGE_BUILD_DIR: ${FUDGE_PROJECT_DIR}/dist/
+      FUDGE_BUILD_ID: ${CIRCLE_BUILD_NUM}
+      FUDGE_BUILD_TAG: ${CIRCLE_TAG}
     steps:
       - before_script
-      - run: cd ${GO_PROJECT_DIR} && ./scripts/build.sh
+      - run: cd ${FUDGE_PROJECT_DIR} && ./scripts/build.sh
 
 workflows:
   default_wf:

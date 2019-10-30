@@ -2,12 +2,12 @@
 
 set -eo pipefail
 
-releaseTag="${CI_PIPELINE_ID}"
-if [ -n "${CI_COMMIT_TAG}" ]
+releaseTag="${FUDGE_BUILD_ID}"
+if [ -n "${FUDGE_BUILD_TAG}" ]
 then
-  releaseTag="${CI_COMMIT_TAG}"
+  releaseTag="${FUDGE_BUILD_TAG}"
 fi
 
 echo "Release Tag: ${releaseTag}"
 
-go build -o "${BUILD_DIST_FOLDER}"/fudge-"${releaseTag}" -v
+go build -o "${FUDGE_BUILD_DIR}"/fudge-"${releaseTag}" -v
