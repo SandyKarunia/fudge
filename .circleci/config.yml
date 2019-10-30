@@ -25,7 +25,7 @@ jobs:
       - persist_to_workspace:
           root: /
           paths:
-            - ${GOPATH}
+            - gopath
   test:
     docker:
       - image: golang:1.12
