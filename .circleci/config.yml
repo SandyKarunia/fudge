@@ -22,11 +22,17 @@ jobs:
       - run: chmod +x ./scripts/*
       - run: go get -t -v -d ./...
       - run: go get -u golang.org/x/lint/golint
+      - persist_to_workspace:
+          root: /
+          paths:
+            - ${GOPATH}
   test:
     docker:
       - image: golang:1.12
     steps:
       - set_env
+      - attach_workspace:
+          at: /
       - run: cd ${GO_PROJECT_DIR}
       - run: ./scripts/test.sh
   build:
