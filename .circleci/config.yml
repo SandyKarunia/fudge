@@ -20,9 +20,6 @@ commands:
           at: /
       - run: cd ${FUDGE_PROJECT_DIR} && ./scripts/<<parameters.script_name>>
 
-orbs:
-  codecov: codecov/codecov@1.0.5
-
 jobs:
   prepare:
     docker:
@@ -35,7 +32,7 @@ jobs:
       - run: cp -rv ${CIRCLE_WORKING_DIRECTORY}/. ${FUDGE_PROJECT_DIR}
       - run: chmod -v +x ${FUDGE_PROJECT_DIR}/scripts/*
       - run: cd ${FUDGE_PROJECT_DIR} && go get -t -v -d ./...
-      - run: go get -u -v golang.org/x/lint/golint github.com/google/wire
+      - run: go get -u -v golang.org/x/lint/golint github.com/google/wire github.com/mattn/goveralls
       - persist_to_workspace:
           root: /
           paths:
@@ -46,9 +43,6 @@ jobs:
     steps:
       - run_script:
           script_name: "test.sh"
-      - codecov/upload:
-          file: ${FUDGE_PROJECT_DIR}/.coverage.out
-          conf: ${FUDGE_PROJECT_DIR}/.codecov.yml
   build:
     docker:
       - image: golang:1.12
