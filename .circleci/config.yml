@@ -48,6 +48,7 @@ jobs:
           script_name: "test.sh"
       - codecov/upload:
           file: ${FUDGE_PROJECT_DIR}/.coverage.out
+          conf: ${FUDGE_PROJECT_DIR}/.codecov.yml
   build:
     docker:
       - image: golang:1.12
