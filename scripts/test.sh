@@ -31,3 +31,6 @@ do
   echo "$t"
 done
 "${GOPATH}"/bin/golint -set_exit_status "${foldersToLint[@]}"
+
+print_title "Uploading coverage result to coveralls..."
+"${GOPATH}"/bin/goveralls -coverprofile=.coverage.out -service=circle-ci -repotoken="${COVERALLS_TOKEN}"

@@ -32,7 +32,7 @@ jobs:
       - run: cp -rv ${CIRCLE_WORKING_DIRECTORY}/. ${FUDGE_PROJECT_DIR}
       - run: chmod -v +x ${FUDGE_PROJECT_DIR}/scripts/*
       - run: cd ${FUDGE_PROJECT_DIR} && go get -t -v -d ./...
-      - run: go get -u -v golang.org/x/lint/golint github.com/google/wire
+      - run: go get -u -v golang.org/x/lint/golint github.com/google/wire github.com/mattn/goveralls
       - persist_to_workspace:
           root: /
           paths:

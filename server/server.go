@@ -26,6 +26,7 @@ type serverImpl struct {
 func (s *serverImpl) Start() {
 	// before we do something, do ground check first
 	if err := s.groundCheck.CheckAll(); err != nil {
+		// TODO log error
 		os.Exit(1)
 	}
 
