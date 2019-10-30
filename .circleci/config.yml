@@ -6,6 +6,9 @@ commands:
     steps:
       - run: echo 'export GOPATH="/gopath"' >> $BASH_ENV
       - run: echo 'export FUDGE_PROJECT_DIR="${GOPATH}/src/github.com/sandykarunia/fudge"' >> $BASH_ENV
+      - run: echo 'export FUDGE_BUILD_DIR="${FUDGE_PROJECT_DIR}/dist"'
+      - run: echo 'export FUDGE_BUILD_ID="${CIRCLE_BUILD_NUM}"'
+      - run: echo 'export FUDGE_BUILD_TAG="${CIRCLE_TAG}"'
   before_script:
     description: "Do necessary actions before running a script inside scripts/ folder"
     steps:
@@ -39,10 +42,6 @@ jobs:
   build:
     docker:
       - image: golang:1.12
-    environment: 
-      FUDGE_BUILD_DIR: ${FUDGE_PROJECT_DIR}/dist/
-      FUDGE_BUILD_ID: ${CIRCLE_BUILD_NUM}
-      FUDGE_BUILD_TAG: ${CIRCLE_TAG}
     steps:
       - before_script
       - run: cd ${FUDGE_PROJECT_DIR} && ./scripts/build.sh

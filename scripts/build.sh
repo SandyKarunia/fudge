@@ -11,3 +11,6 @@ fi
 echo "Release Tag: ${releaseTag}"
 
 go build -o "${FUDGE_BUILD_DIR}"/fudge-"${releaseTag}" -v
+
+echo "ls build dir:"
+ls "${FUDGE_BUILD_DIR}"
