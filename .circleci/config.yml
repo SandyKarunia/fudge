@@ -6,9 +6,9 @@ commands:
     steps:
       - run: echo 'export GOPATH="/gopath"' >> $BASH_ENV
       - run: echo 'export FUDGE_PROJECT_DIR="${GOPATH}/src/github.com/sandykarunia/fudge"' >> $BASH_ENV
-      - run: echo 'export FUDGE_BUILD_DIR="${FUDGE_PROJECT_DIR}/dist"'
-      - run: echo 'export FUDGE_BUILD_ID="${CIRCLE_BUILD_NUM}"'
-      - run: echo 'export FUDGE_BUILD_TAG="${CIRCLE_TAG}"'
+      - run: echo 'export FUDGE_BUILD_DIR="${FUDGE_PROJECT_DIR}/dist"' >> $BASH_ENV
+      - run: echo 'export FUDGE_BUILD_ID="${CIRCLE_BUILD_NUM}"' >> $BASH_ENV
+      - run: echo 'export FUDGE_BUILD_TAG="${CIRCLE_TAG}"' >> $BASH_ENV
   before_script:
     description: "Do necessary actions before running a script inside scripts/ folder"
     steps:
