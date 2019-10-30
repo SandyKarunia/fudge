@@ -15,7 +15,7 @@ jobs:
       - checkout
       - set_env
       - run: echo GO_PROJECT_DIR="${GO_PROJECT_DIR}"
-      - run: mkdir -p ${GO_PROJECT_DIR}
+      - run: mkdir -pv "${GO_PROJECT_DIR}"
       - run: cp -rv ${CIRCLE_WORKING_DIRECTORY}/. ${GO_PROJECT_DIR}
       - run: cd ${GO_PROJECT_DIR}
       - run: chmod +x ./scripts/*
