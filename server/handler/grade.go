@@ -3,7 +3,6 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/go-playground/pure"
 	"github.com/google/uuid"
 	"github.com/sandykarunia/fudge/grader"
 	"net/http"
@@ -51,7 +50,7 @@ type reqPayloadStr struct {
 func Grade(w http.ResponseWriter, r *http.Request) {
 	// TODO check if the judge is currently judging or not, if so, reject this request
 
-	w.Header().Set(pure.ContentType, pure.ApplicationJSON)
+	w.Header().Set("Content-Type", "application/json")
 
 	// read body as JSON
 	var payload reqPayloadStr
