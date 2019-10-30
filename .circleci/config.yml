@@ -11,6 +11,7 @@ jobs:
   prepare:
     docker:
       - image: golang:1.12
+    working_directory: /root/project
     steps:
       - checkout
       - set_env
