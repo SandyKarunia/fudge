@@ -9,12 +9,16 @@ commands:
       - run: echo 'export FUDGE_BUILD_DIR="${FUDGE_PROJECT_DIR}/dist"' >> $BASH_ENV
       - run: echo 'export FUDGE_BUILD_ID="${CIRCLE_BUILD_NUM}"' >> $BASH_ENV
       - run: echo 'export FUDGE_BUILD_TAG="${CIRCLE_TAG}"' >> $BASH_ENV
-  before_script:
-    description: "Do necessary actions before running a script inside scripts/ folder"
+  run_script:
+    description: "Run a script inside scripts/ folder"
+    parameters:
+      script_name:
+        type: string
     steps:
       - set_env
       - attach_workspace:
           at: /
+      - run: cd ${FUDGE_PROJECT_DIR} && ./scripts/<<parameters.script_name>>
 
 jobs:
   prepare:
@@ -37,14 +41,14 @@ jobs:
     docker:
       - image: golang:1.12
     steps:
-      - before_script
-      - run: cd ${FUDGE_PROJECT_DIR} && ./scripts/test.sh
+      - run_script:
+          script_name: "test.sh"
   build:
     docker:
       - image: golang:1.12
     steps:
-      - before_script
-      - run: cd ${FUDGE_PROJECT_DIR} && ./scripts/build.sh
+      - run_script:
+          script_name: "build.sh"
 
 workflows:
   default_wf:
