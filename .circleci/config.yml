@@ -20,6 +20,9 @@ commands:
           at: /
       - run: cd ${FUDGE_PROJECT_DIR} && ./scripts/<<parameters.script_name>>
 
+orbs:
+  codecov: codecov/codecov@1.0.5
+
 jobs:
   prepare:
     docker:
@@ -43,6 +46,8 @@ jobs:
     steps:
       - run_script:
           script_name: "test.sh"
+      - codecov/upload:
+          file: ${FUDGE_PROJECT_DIR}/.coverage.out
   build:
     docker:
       - image: golang:1.12
