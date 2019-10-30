@@ -23,7 +23,7 @@ jobs:
       - set_env
       - run: mkdir -pv "${GO_PROJECT_DIR}"
       - run: cp -rv ${CIRCLE_WORKING_DIRECTORY}/. ${GO_PROJECT_DIR}
-      - run: chmod +xv ${GO_PROJECT_DIR}/scripts/*
+      - run: chmod -v +x ${GO_PROJECT_DIR}/scripts/*
       - run: cd ${GO_PROJECT_DIR} && go get -t -v -d ./...
       - run: go get -u -v golang.org/x/lint/golint github.com/google/wire
       - persist_to_workspace:
