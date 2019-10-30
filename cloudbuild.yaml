@@ -1,6 +1,7 @@
 steps:
   - name: 'gcr.io/cloud-builders/go'
     args: ['get', '-t', '-v', '-d', '-u',
+           'github.com/sandykarunia/fudge',
            'github.com/google/wire/cmd/wire',
            './...']
     env: ['PROJECT_ROOT=github.com/sandykarunia/fudge']
