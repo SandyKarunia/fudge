@@ -1,8 +1,8 @@
 package groundcheck
 
 import (
-	"github.com/stretchr/testify/assert"
 	"github.com/sandykarunia/fudge/groundcheck/checkers/mocks"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
