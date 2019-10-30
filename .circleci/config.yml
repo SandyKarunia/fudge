@@ -4,15 +4,36 @@ commands:
   set_env:
     description: "Set necessary environment variables for all jobs"
     steps:
-      - run: export GOPATH="/gopath"
-      - run: export GO_PROJECT_DIR="${GOPATH}/src/github.com/sandykarunia/fudge"
+      - run: echo 'export GOPATH="/gopath"' >> $BASH_ENV
+      - run: echo 'export GO_PROJECT_DIR="${GOPATH}/src/github.com/sandykarunia/fudge"' >> $BASH_ENV
       - run: echo "GO_PROJECT_DIR=${GO_PROJECT_DIR}"
 
 jobs:
+  install:
+    docker:
+      - image: golang:1.12
+    steps:
+      - checkout
+      - set_env
+  test:
+    docker:
+      - image: golang:1.12
+    steps:
+      - checkout
+      - set_env
   build:
     docker:
       - image: golang:1.12
     steps:
       - checkout
       - set_env
+
+
+workflows:
+  default_wf:
+    jobs:
+      - install
+      - test:
+          requires:
+            - install
 
