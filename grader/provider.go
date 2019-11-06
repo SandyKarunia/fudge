@@ -2,5 +2,8 @@ package grader
 
 // Provider ...
 func Provider() Grader {
-	return &graderImpl{}
+	obj := &graderImpl{}
+	obj.status = StatusIdle
+
+	return obj
 }

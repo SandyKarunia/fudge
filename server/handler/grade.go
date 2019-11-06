@@ -3,13 +3,24 @@ package handler
 import (
 	"encoding/json"
 	"github.com/google/uuid"
+	"github.com/sandykarunia/fudge/grader"
 	"net/http"
 )
 
 // Grade ...
-func Grade(w http.ResponseWriter, r *http.Request) {
-	// TODO check if the judge is currently judging or not, if so, reject this request,
-	//  use check-lock-check to be safe
+func (h *handlerImpl) Grade(w http.ResponseWriter, r *http.Request) {
+	// check if the judge is currently busy or not, if so, reject this request
+	// use check-lock-check to be safe
+	if h.grader.Status() != grader.StatusIdle {
+		w.WriteHeader(http.StatusConflict)
+		return
+	}
+	h.graderLock.Lock()
+	defer h.graderLock.Unlock()
+	if h.grader.Status() != grader.StatusIdle {
+		w.WriteHeader(http.StatusConflict)
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 

@@ -21,6 +21,7 @@ type Server interface {
 
 type serverImpl struct {
 	groundCheck groundcheck.GroundCheck
+	handler     handler.Handler
 }
 
 func (s *serverImpl) Start() {
@@ -33,8 +34,8 @@ func (s *serverImpl) Start() {
 	defaultPort := 8080
 
 	r := mux.NewRouter()
-	r.HandleFunc("/health_check", handler.HealthCheck)
-	r.HandleFunc("/grade", handler.Grade).Methods(http.MethodPost)
+	r.HandleFunc("/health_check", s.handler.HealthCheck)
+	r.HandleFunc("/grade", s.handler.Grade).Methods(http.MethodPost)
 
 	addr := fmt.Sprintf("0.0.0.0:%d", defaultPort)
 	srv := &http.Server{

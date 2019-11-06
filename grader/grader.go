@@ -5,6 +5,8 @@ package grader
 type Grader interface {
 	// Status returns the current status of the grader
 	Status() Status
+
+	// TODO GradeAsync grades the submission asynchronously
 }
 
 type graderImpl struct {
