@@ -8,7 +8,8 @@ import (
 
 // Grade ...
 func Grade(w http.ResponseWriter, r *http.Request) {
-	// TODO check if the judge is currently judging or not, if so, reject this request
+	// TODO check if the judge is currently judging or not, if so, reject this request,
+	//  use check-lock-check to be safe
 
 	w.Header().Set("Content-Type", "application/json")
 
