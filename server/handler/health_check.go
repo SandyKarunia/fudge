@@ -9,6 +9,6 @@ import (
 func HealthCheck(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(map[string]bool{
-		"health": true,
+		"healthy": true,
 	})
 }

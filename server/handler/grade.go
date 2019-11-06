@@ -7,6 +7,7 @@ import (
 	"github.com/sandykarunia/fudge/grader"
 	"net/http"
 	"regexp"
+	"strings"
 )
 
 type reqPayloadStr struct {
@@ -90,12 +91,23 @@ func Grade(w http.ResponseWriter, r *http.Request) {
 		errors = append(errors, fmt.Sprintf("output_url must be an array with length equals to 2"))
 	}
 	if len(payload.InputURL) == 2 && len(payload.OutputURL) == 2 {
+		// check if input_url and output_url have same ranges
 		rng := payload.InputURL[1]
 		if rng != payload.OutputURL[1] {
 			errors = append(errors, fmt.Sprintf("range (2nd element) in input_url has to be equal to output_url"))
 		}
+
+		// check if the range is valid
 		if matched, _ := regexp.Match("^\\d+-\\d+$", []byte(rng)); !matched {
 			errors = append(errors, fmt.Sprintf("range (2nd element) in input_url and output_url have to follow regex pattern '^\\d+-\\d+$', e.g. '3-51'"))
+		}
+
+		// check if input_url and output_url contains mandatory "{%}" string
+		if !strings.Contains(payload.InputURL[0], "{%}") {
+			errors = append(errors, "URL string (1st element) in input_url have to contain '{%}' string")
+		}
+		if !strings.Contains(payload.OutputURL[0], "{%}") {
+			errors = append(errors, "URL string (1st element) in output_url have to contain '{%}' string")
 		}
 	}
 
