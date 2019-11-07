@@ -3,7 +3,6 @@ package handler
 import (
 	"github.com/sandykarunia/fudge/grader"
 	"net/http"
-	"sync"
 )
 
 // Handler is an interface for all handlers for requests
@@ -13,6 +12,5 @@ type Handler interface {
 }
 
 type handlerImpl struct {
-	grader     grader.Grader
-	graderLock sync.Mutex
+	grader grader.Grader
 }

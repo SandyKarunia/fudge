@@ -14,10 +14,11 @@ type Status string
 
 // available status
 const (
-	StatusIdle         Status = "IDLE"
+	StatusAcknowledged        = "ACKNOWLEDGED"
 	StatusFetchInput          = "FETCH_INPUT"
 	StatusFetchOutput         = "FETCH_OUTPUT"
-	StatusPrepare             = "PREPARE"
 	StatusGrading             = "GRADING"
+	StatusIdle         Status = "IDLE"
 	StatusNotifyResult        = "NOTIFY_RESULT"
+	StatusPrepare             = "PREPARE"
 )
