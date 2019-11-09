@@ -16,8 +16,8 @@ const (
 )
 
 // Logger logs messages with severity levels to stdout / stderr and a log file
-// Log files will be located inside fudge directory (${HOME}/.fudge) with format log-${fudge_run_timestamp}.txt
-// We split the severity levels into multiple functions for convenient
+// Log files will be located inside fudge directory (${HOME}/.fudge) with format log-${logger_init_timestamp}.txt
+// We split the severity levels into multiple functions for convenience
 //go:generate mockery -name=Logger
 type Logger interface {
 	// Info logs a message that acts as an information.
@@ -64,5 +64,5 @@ func (l *loggerImpl) doLog(
 	}
 	_, _ = fmt.Fprintf(targetStd, "%d: [%s] %s\n", time.Now().Unix(), severityTag, fmt.Sprintf(message, args...))
 
-	// TODO log to file
+	// TODO log to file, use channel to put into buffer, then have a scheduled job / threshold channel number to flush
 }

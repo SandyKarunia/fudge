@@ -5,6 +5,6 @@ import (
 	"testing"
 )
 
-func TestProvideStdLogger(t *testing.T) {
-	assert.Implements(t, (*Logger)(nil), ProvideStdLogger(nil))
+func TestProvider(t *testing.T) {
+	assert.Implements(t, (*Logger)(nil), Provider(nil))
 }
