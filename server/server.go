@@ -74,5 +74,6 @@ func (s *serverImpl) Start() {
 	// <-ctx.Done() if our application should wait for other services
 	// to finalize based on context cancellation.
 	s.logger.Info("Shutting down")
+	s.logger.FlushBuffer()
 	os.Exit(0)
 }

@@ -34,6 +34,9 @@ type Logger interface {
 	// logs to stderr and log file.
 	// example: "Failed to get user home directory information, error: $home is not defined"
 	Error(message string, args ...interface{})
+
+	// FlushBuffer flushes the message buffer into a log file
+	FlushBuffer()
 }
 
 type loggerImpl struct {
@@ -52,6 +55,10 @@ func (l *loggerImpl) Error(message string, args ...interface{}) {
 	l.doLog(severityError, message, args...)
 }
 
+func (l *loggerImpl) FlushBuffer() {
+	panic("implement me")
+}
+
 func (l *loggerImpl) doLog(
 	severityTag severityLevel,
 	message string,
@@ -64,5 +71,5 @@ func (l *loggerImpl) doLog(
 	}
 	_, _ = fmt.Fprintf(targetStd, "%d: [%s] %s\n", time.Now().Unix(), severityTag, fmt.Sprintf(message, args...))
 
-	// TODO log to file, use channel to put into buffer, then have a scheduled job / threshold channel number to flush
+	// TODO log to file, use channel to put into buffer, then flush every 1 minute or when Flush is called
 }
