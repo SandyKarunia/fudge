@@ -6,6 +6,7 @@ import (
 
 var (
 	osOpen        = os.Open
+	osOpenFile    = os.OpenFile
 	osCreate      = os.Create
 	osGeteuid     = os.Geteuid
 	osGetenv      = os.Getenv
@@ -18,6 +19,7 @@ var (
 //go:generate mockery -name=OSFunctions
 type OSFunctions interface {
 	Open(name string) (*os.File, error)
+	OpenFile(name string, flag int, perm os.FileMode) (*os.File, error)
 	Create(name string) (*os.File, error)
 	Geteuid() int
 	Getenv(key string) string
@@ -30,6 +32,10 @@ type osFunctionsImpl struct{}
 
 func (o *osFunctionsImpl) Open(name string) (*os.File, error) {
 	return osOpen(name)
+}
+
+func (o *osFunctionsImpl) OpenFile(name string, flag int, perm os.FileMode) (*os.File, error) {
+	return osOpenFile(name, flag, perm)
 }
 
 func (o *osFunctionsImpl) Create(name string) (*os.File, error) {

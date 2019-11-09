@@ -100,6 +100,29 @@ func (_m *OSFunctions) Open(name string) (*os.File, error) {
 	return r0, r1
 }
 
+// OpenFile provides a mock function with given fields: name, flag, perm
+func (_m *OSFunctions) OpenFile(name string, flag int, perm os.FileMode) (*os.File, error) {
+	ret := _m.Called(name, flag, perm)
+
+	var r0 *os.File
+	if rf, ok := ret.Get(0).(func(string, int, os.FileMode) *os.File); ok {
+		r0 = rf(name, flag, perm)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*os.File)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string, int, os.FileMode) error); ok {
+		r1 = rf(name, flag, perm)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Stat provides a mock function with given fields: name
 func (_m *OSFunctions) Stat(name string) (os.FileInfo, error) {
 	ret := _m.Called(name)

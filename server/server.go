@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/sandykarunia/fudge/groundcheck"
+	"github.com/sandykarunia/fudge/logger"
 	"github.com/sandykarunia/fudge/server/handler"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -22,6 +22,7 @@ type Server interface {
 type serverImpl struct {
 	groundCheck groundcheck.GroundCheck
 	handler     handler.Handler
+	logger      logger.Logger
 }
 
 func (s *serverImpl) Start() {
@@ -49,9 +50,9 @@ func (s *serverImpl) Start() {
 
 	// Run our server in a goroutine so that it doesn't block.
 	go func() {
-		log.Printf("Server started at %s\n", addr)
+		s.logger.Info("Server started at %s", addr)
 		if err := srv.ListenAndServe(); err != nil {
-			log.Println(err)
+			s.logger.Error("Failed to listen and server, err: %s", err.Error())
 		}
 	}()
 
@@ -72,6 +73,6 @@ func (s *serverImpl) Start() {
 	// Optionally, we could run srv.Shutdown in a goroutine and block on
 	// <-ctx.Done() if our application should wait for other services
 	// to finalize based on context cancellation.
-	log.Println("shutting down")
+	s.logger.Info("Shutting down")
 	os.Exit(0)
 }

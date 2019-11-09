@@ -66,7 +66,8 @@ func (g *graderImpl) doGrade(
 		g.status = StatusIdle
 	}()
 
-	// TODO all operations below are inside sandbox
+	// all operations below are inside the sandbox
+
 	// TODO prepare sandbox (PREPARE)
 	// TODO fetch input, put into file (FETCH_INPUT)
 	// TODO fetch output, put into file (FETCH_OUTPUT)

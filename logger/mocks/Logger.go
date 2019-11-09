@@ -8,26 +8,26 @@ type Logger struct {
 	mock.Mock
 }
 
-// Error provides a mock function with given fields: tag, message, args
-func (_m *Logger) Error(tag string, message string, args ...interface{}) {
+// Error provides a mock function with given fields: message, args
+func (_m *Logger) Error(message string, args ...interface{}) {
 	var _ca []interface{}
-	_ca = append(_ca, tag, message)
+	_ca = append(_ca, message)
 	_ca = append(_ca, args...)
 	_m.Called(_ca...)
 }
 
-// Info provides a mock function with given fields: tag, message, args
-func (_m *Logger) Info(tag string, message string, args ...interface{}) {
+// Info provides a mock function with given fields: message, args
+func (_m *Logger) Info(message string, args ...interface{}) {
 	var _ca []interface{}
-	_ca = append(_ca, tag, message)
+	_ca = append(_ca, message)
 	_ca = append(_ca, args...)
 	_m.Called(_ca...)
 }
 
-// Warn provides a mock function with given fields: tag, message, args
-func (_m *Logger) Warn(tag string, message string, args ...interface{}) {
+// Warn provides a mock function with given fields: message, args
+func (_m *Logger) Warn(message string, args ...interface{}) {
 	var _ca []interface{}
-	_ca = append(_ca, tag, message)
+	_ca = append(_ca, message)
 	_ca = append(_ca, args...)
 	_m.Called(_ca...)
 }

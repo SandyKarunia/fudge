@@ -2,6 +2,7 @@ package sdk
 
 import (
 	"errors"
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
@@ -67,6 +68,22 @@ func TestOsFunctionsImpl_Open(t *testing.T) {
 	res, err := obj.Open("name1")
 	assert.Nil(t, res)
 	assert.Equal(t, errors.New("name: name1"), err)
+}
+
+func TestOsFunctionsImpl_OpenFile(t *testing.T) {
+	// mock osOpenFile
+	originalOSOpenFile := osOpenFile
+	osOpenFile = func(name string, flag int, perm os.FileMode) (file *os.File, e error) {
+		return nil, fmt.Errorf("%s;%d;%d", name, flag, perm)
+	}
+	defer func() {
+		osOpenFile = originalOSOpenFile
+	}()
+
+	obj := osFunctionsImpl{}
+	res, err := obj.OpenFile("name1", 123, 321)
+	assert.Nil(t, res)
+	assert.Equal(t, errors.New("name1;123;321"), err)
 }
 
 func TestOsFunctionsImpl_UserHomeDir(t *testing.T) {

@@ -11,6 +11,20 @@ type Grader struct {
 	mock.Mock
 }
 
+// GradeAsync provides a mock function with given fields: submissionCode, gradingCode, gradingMethod, memoryLimitKB, timeLimitMS, inputURL, outputURL
+func (_m *Grader) GradeAsync(submissionCode string, gradingCode string, gradingMethod grader.Method, memoryLimitKB int64, timeLimitMS int64, inputURL []string, outputURL []string) bool {
+	ret := _m.Called(submissionCode, gradingCode, gradingMethod, memoryLimitKB, timeLimitMS, inputURL, outputURL)
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func(string, string, grader.Method, int64, int64, []string, []string) bool); ok {
+		r0 = rf(submissionCode, gradingCode, gradingMethod, memoryLimitKB, timeLimitMS, inputURL, outputURL)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	return r0
+}
+
 // Status provides a mock function with given fields:
 func (_m *Grader) Status() grader.Status {
 	ret := _m.Called()

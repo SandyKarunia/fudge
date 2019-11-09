@@ -9,6 +9,7 @@ import (
 	"github.com/sandykarunia/fudge/grader"
 	"github.com/sandykarunia/fudge/groundcheck"
 	"github.com/sandykarunia/fudge/groundcheck/checkers"
+	"github.com/sandykarunia/fudge/logger"
 	"github.com/sandykarunia/fudge/sdk"
 	"github.com/sandykarunia/fudge/server/handler"
 	"github.com/sandykarunia/fudge/utils"
@@ -27,6 +28,7 @@ func Instance() Server {
 	groundCheck := groundcheck.Provider(checkersCheckers)
 	graderGrader := grader.Provider()
 	handlerHandler := handler.Provider(graderGrader)
-	server := Provider(groundCheck, handlerHandler)
+	loggerLogger := logger.Provider(osFunctions)
+	server := Provider(groundCheck, handlerHandler, loggerLogger)
 	return server
 }

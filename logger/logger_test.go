@@ -6,16 +6,16 @@ import (
 	"testing"
 )
 
-func setupTest(targetFile *os.File, severityTag, tag, msg string, arg interface{}) *stdLogger {
+func setupTest(targetFile *os.File, severityTag, tag, msg string, arg interface{}) *loggerImpl {
 	mockFmt := &mocks.FmtFunctions{}
-	obj := &stdLogger{fmt: mockFmt}
+	obj := &loggerImpl{fmt: mockFmt}
 	mockFmt.On("Fprintf", targetFile, "["+severityTag+"] ["+tag+"] "+msg+"\n", arg).
 		Return(123, nil).
 		Once()
 	return obj
 }
 
-func verifyTest(t *testing.T, l *stdLogger) {
+func verifyTest(t *testing.T, l *loggerImpl) {
 	mf, ok := l.fmt.(*mocks.FmtFunctions)
 	if !ok {
 		t.Fatalf("cannot cast l.fmt to *mocks.FmtFunctions")
