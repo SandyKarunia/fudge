@@ -91,7 +91,7 @@ func (l *loggerImpl) FlushBuffer() {
 	}
 
 	// write to log file
-	logFile, err := os.OpenFile(l._logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	logFile, err := l.os.OpenFile(l._logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		l.Warn("Failed to open log file, err = %s\n", err.Error())
 		return
