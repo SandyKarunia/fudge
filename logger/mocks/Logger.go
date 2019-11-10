@@ -16,6 +16,11 @@ func (_m *Logger) Error(message string, args ...interface{}) {
 	_m.Called(_ca...)
 }
 
+// FlushBuffer provides a mock function with given fields:
+func (_m *Logger) FlushBuffer() {
+	_m.Called()
+}
+
 // Info provides a mock function with given fields: message, args
 func (_m *Logger) Info(message string, args ...interface{}) {
 	var _ca []interface{}

@@ -51,8 +51,8 @@ func (s *serverImpl) Start() {
 	// Run our server in a goroutine so that it doesn't block.
 	go func() {
 		s.logger.Info("Server started at %s", addr)
-		if err := srv.ListenAndServe(); err != nil {
-			s.logger.Error("Failed to listen and server, err: %s", err.Error())
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			s.logger.Error("Failed to listen and serve, err: %s", err.Error())
 		}
 	}()
 
