@@ -1,12 +1,18 @@
 package logger
 
 import (
+	utilsmocks "github.com/sandykarunia/fudge/utils/mocks"
 	"testing"
 	"time"
 )
 
 func TestLoggerImpl_NoCrash(t *testing.T) {
-	obj := &loggerImpl{}
+	sysMocks := &utilsmocks.System{}
+	sysMocks.On("GetFudgeDir").Return("")
+	obj := (&loggerImpl{
+		sys: sysMocks,
+	}).init()
+
 	obj.Info("info message no arguments")
 	obj.Info("info message %d", time.Now().Unix())
 	obj.Warn("warn message no arguments")
