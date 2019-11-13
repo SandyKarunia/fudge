@@ -1,9 +1,17 @@
 package grader
 
-// Provider ...
-func Provider() Grader {
-	obj := &graderImpl{}
-	obj.status = StatusIdle
+import (
+	"github.com/sandykarunia/fudge/logger"
+	"github.com/sandykarunia/fudge/sandbox"
+	"sync"
+)
 
-	return obj
+// Provider ...
+func Provider(factory sandbox.Factory, logger logger.Logger) Grader {
+	return &graderImpl{
+		status:     StatusIdle,
+		graderLock: sync.Mutex{},
+		sbFactory:  factory,
+		logger:     logger,
+	}
 }

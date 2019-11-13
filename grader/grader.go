@@ -1,6 +1,9 @@
 package grader
 
 import (
+	"fmt"
+	"github.com/sandykarunia/fudge/logger"
+	"github.com/sandykarunia/fudge/sandbox"
 	"sync"
 )
 
@@ -13,6 +16,7 @@ type Grader interface {
 	// GradeAsync is the main body of the grader which will grade the requested submission asynchronously.
 	// Checks the status of the grader first before grading, returns false if it is not idle
 	GradeAsync(
+		uuid string,
 		submissionCode, gradingCode string,
 		gradingMethod Method,
 		memoryLimitKB, timeLimitMS int64,
@@ -25,6 +29,12 @@ type graderImpl struct {
 
 	// a lock to prevent multiple grading at a time
 	graderLock sync.Mutex
+
+	// factory for sandbox
+	sbFactory sandbox.Factory
+
+	// deps
+	logger logger.Logger
 }
 
 func (g *graderImpl) Status() Status {
@@ -32,11 +42,13 @@ func (g *graderImpl) Status() Status {
 }
 
 func (g *graderImpl) GradeAsync(
+	uuid string,
 	submissionCode, gradingCode string,
 	gradingMethod Method,
 	memoryLimitKB, timeLimitMS int64,
 	inputURL, outputURL []string) bool {
-	// check judge status first, if there is another grader that is running (i.e. status != idle), then return false
+	g.logger.Info("GradeAsync triggered with uuid %s", uuid)
+	// check grader status first, if there is another grader that is running (i.e. status != idle), then return false
 	// use check-lock-check pattern
 	if g.status != StatusIdle {
 		return false
@@ -47,8 +59,8 @@ func (g *graderImpl) GradeAsync(
 		return false
 	}
 
-	// change judge status first before return
-	g.status = StatusAcknowledged
+	// change grader status first before return
+	g.changeStatus(StatusAcknowledged, "Successfully triggered GradeAsync with uuid %s", uuid)
 
 	// run the grading main flow in different thread
 	go g.doGrade(submissionCode, gradingCode, gradingMethod, memoryLimitKB, timeLimitMS, inputURL, outputURL)
@@ -63,21 +75,34 @@ func (g *graderImpl) doGrade(
 	inputURL, outputURL []string) {
 	// always set to idle after everything has finished
 	defer func() {
-		g.status = StatusIdle
+		g.changeStatus(StatusIdle, "End of doGrade function")
 	}()
 
 	// all operations below are inside the sandbox
 
-	// TODO prepare sandbox (PREPARE)
-	g.status = StatusPrepare
+	g.changeStatus(StatusPrepare, "Preparing sandbox")
+	sb := g.sbFactory.NewPreparedSandbox()
+	g.logger.Info("Sandbox prepared with box-id = %d", sb.GetID())
+
 	// TODO fetch input, put into file (FETCH_INPUT)
-	g.status = StatusFetchInput
+	g.changeStatus(StatusFetchInput, "Fetching input data")
+
 	// TODO fetch output, put into file (FETCH_OUTPUT)
-	g.status = StatusFetchOutput
+	g.changeStatus(StatusFetchOutput, "Fetching output data")
+
 	// TODO grade submission (GRADING)
-	g.status = StatusGrading
+	g.changeStatus(StatusGrading, "Grading")
+
 	// TODO notify result (NOTIFY_RESULT)
-	g.status = StatusNotifyResult
+	g.changeStatus(StatusNotifyResult, "Notifying result via webhook HTTP request")
+
 	// TODO cleanup sandbox (CLEAN_UP)
-	g.status = StatusCleanUp
+	//g.changeStatus(StatusCleanUp, "Cleaning up sandbox with box-id = %d", sb.GetID())
+
+}
+
+// a helper function to help grader change its status
+func (g *graderImpl) changeStatus(nextStatus Status, message string, args ...interface{}) {
+	g.logger.Info(fmt.Sprintf("%s, status: %s => %s", message, g.status, nextStatus), args...)
+	g.status = nextStatus
 }

@@ -15,7 +15,6 @@ func (h *handlerImpl) Grade(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&payload)
 	if err != nil {
-		// TODO log error
 		w.WriteHeader(http.StatusBadRequest)
 		_ = json.NewEncoder(w).Encode(map[string]string{
 			"error": err.Error(),
@@ -38,8 +37,9 @@ func (h *handlerImpl) Grade(w http.ResponseWriter, r *http.Request) {
 
 	// try to grade asynchronously
 	if !h.grader.GradeAsync(
-		payload.SubmissionCode, payload.GradingCode, payload.GradingMethod, payload.MemoryLimitKB, payload.TimeLimitMS,
-		payload.InputURL, payload.OutputURL) {
+		newUUID, payload.SubmissionCode, payload.GradingCode, payload.GradingMethod, payload.MemoryLimitKB,
+		payload.TimeLimitMS, payload.InputURL, payload.OutputURL) {
+		h.logger.Warn("Grader is busy with status %s", h.grader.Status())
 		w.WriteHeader(http.StatusConflict)
 		return
 	}

@@ -16,10 +16,6 @@ type Sandbox interface {
 	// if the file exists, it will overwrite the file
 	WriteFile(filename string, stream io.ReadCloser) error
 
-	// CopyFile copies the source file into the sandbox
-	// we don't need the target utilsPath in sandbox because the file / folder structure is flat
-	CopyFile(source *os.File) error
-
 	// GetFile gets a file from
 	// we only need the filename because the file / folder structure is flat
 	GetFile(fileName string) (*os.File, error)
@@ -34,17 +30,18 @@ type Sandbox interface {
 	Prepare()
 
 	// GetID returns id
-	GetID() int
+	GetID() uint32
 }
 
 type sandboxImpl struct {
 	sdkOS sdk.OSFunctions
 	sdkIO sdk.IOFunctions
 
-	id          int
+	id          uint32
 	isDestroyed bool
 	isPrepared  bool
 	utilsPath   utils.Path
+	utilsSystem utils.System
 	sandboxDir  string
 }
 
@@ -80,11 +77,19 @@ func (s *sandboxImpl) Run(commands ...string) error {
 }
 
 func (s *sandboxImpl) Destroy() {
-	if !s.isActive() {
+	if !s.isActive() || s.isDestroyed {
 		return
 	}
-
 	s.isDestroyed = true
+
+	// destroy / cleanup the sandbox
+	out, err := s.utilsSystem.Execute(
+		s.utilsPath.IsolateBinary(), "--cleanup", fmt.Sprintf("--box-id=%d", s.id),
+	)
+	// TODO dont print like this
+	fmt.Println(out)
+	fmt.Println(err)
+
 	panic("implement me")
 }
 
@@ -92,10 +97,19 @@ func (s *sandboxImpl) Prepare() {
 	if s.isPrepared || s.isDestroyed {
 		return
 	}
-	panic("implement me")
+	s.isPrepared = true
+
+	// create sandbox
+	fmt.Println("isolate binary: " + s.utilsPath.IsolateBinary())
+	out, err := s.utilsSystem.Execute(
+		s.utilsPath.IsolateBinary(), "--init", "--cg", fmt.Sprintf("--box-id=%d", s.id),
+	)
+	// TODO dont print like this, put sandbox directory to sandboxDir variable
+	fmt.Println(out)
+	fmt.Println(err)
 }
 
-func (s *sandboxImpl) GetID() int {
+func (s *sandboxImpl) GetID() uint32 {
 	return s.id
 }
 

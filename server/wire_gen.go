@@ -10,6 +10,7 @@ import (
 	"github.com/sandykarunia/fudge/groundcheck"
 	"github.com/sandykarunia/fudge/groundcheck/checkers"
 	"github.com/sandykarunia/fudge/logger"
+	"github.com/sandykarunia/fudge/sandbox"
 	"github.com/sandykarunia/fudge/sdk"
 	"github.com/sandykarunia/fudge/server/handler"
 	"github.com/sandykarunia/fudge/utils"
@@ -26,9 +27,10 @@ func Instance() Server {
 	path := utils.ProvidePath(system)
 	checkersCheckers := checkers.Provider(system, file, path)
 	groundCheck := groundcheck.Provider(checkersCheckers)
-	graderGrader := grader.Provider()
-	handlerHandler := handler.Provider(graderGrader)
+	factory := sandbox.Provider(osFunctions, ioFunctions, path, system)
 	loggerLogger := logger.Provider(osFunctions, system)
+	graderGrader := grader.Provider(factory, loggerLogger)
+	handlerHandler := handler.Provider(graderGrader, loggerLogger)
 	server := Provider(groundCheck, handlerHandler, loggerLogger)
 	return server
 }

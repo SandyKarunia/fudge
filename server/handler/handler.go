@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/sandykarunia/fudge/grader"
+	"github.com/sandykarunia/fudge/logger"
 	"net/http"
 )
 
@@ -13,4 +14,5 @@ type Handler interface {
 
 type handlerImpl struct {
 	grader grader.Grader
+	logger logger.Logger
 }

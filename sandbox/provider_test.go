@@ -6,5 +6,5 @@ import (
 )
 
 func TestProvider(t *testing.T) {
-	assert.Implements(t, (*Factory)(nil), Provider(nil))
+	assert.Implements(t, (*Factory)(nil), Provider(nil, nil, nil, nil))
 }
