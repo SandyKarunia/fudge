@@ -12,7 +12,7 @@ type Factory interface {
 }
 
 type factoryImpl struct {
-	path utils.Path
+	utilsPath utils.Path
 }
 
 func (f *factoryImpl) NewSandbox() Sandbox {
@@ -21,8 +21,10 @@ func (f *factoryImpl) NewSandbox() Sandbox {
 	// - the range of ID is up to 2^32-1, so if a machine have multiple judges, the chance for it to collide is small
 	// - the judge will clean up the sandbox instance after usage, which means the used ID becomes available
 	newID := rand.Int()
-	return &sandboxImpl{
-		id:   newID,
-		path: f.path,
+	sandbox := &sandboxImpl{
+		id:        newID,
+		utilsPath: f.utilsPath,
 	}
+
+	return sandbox
 }

@@ -69,8 +69,15 @@ func (g *graderImpl) doGrade(
 	// all operations below are inside the sandbox
 
 	// TODO prepare sandbox (PREPARE)
+	g.status = StatusPrepare
 	// TODO fetch input, put into file (FETCH_INPUT)
+	g.status = StatusFetchInput
 	// TODO fetch output, put into file (FETCH_OUTPUT)
+	g.status = StatusFetchOutput
 	// TODO grade submission (GRADING)
+	g.status = StatusGrading
 	// TODO notify result (NOTIFY_RESULT)
+	g.status = StatusNotifyResult
+	// TODO cleanup sandbox (CLEAN_UP)
+	g.status = StatusCleanUp
 }

@@ -15,6 +15,7 @@ type Status string
 // available status
 const (
 	StatusAcknowledged        = "ACKNOWLEDGED"
+	StatusCleanUp             = "CLEAN_UP"
 	StatusFetchInput          = "FETCH_INPUT"
 	StatusFetchOutput         = "FETCH_OUTPUT"
 	StatusGrading             = "GRADING"

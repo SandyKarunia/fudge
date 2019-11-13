@@ -8,7 +8,7 @@ import (
 
 func TestFactoryImpl_NewSandbox(t *testing.T) {
 	mockPath := &mocks.Path{}
-	obj := factoryImpl{path: mockPath}
+	obj := factoryImpl{utilsPath: mockPath}
 
 	// should return different IDs most of the time
 	usedIDs := map[int]bool{}
