@@ -1,6 +1,7 @@
 package sandbox
 
 import (
+	"github.com/sandykarunia/fudge/logger"
 	"github.com/sandykarunia/fudge/sdk"
 	"github.com/sandykarunia/fudge/utils"
 	"math/rand"
@@ -17,6 +18,9 @@ type factoryImpl struct {
 	sdkIO       sdk.IOFunctions
 	utilsPath   utils.Path
 	utilsSystem utils.System
+	logger      logger.Logger
+
+	isCGSupported bool
 }
 
 func (f *factoryImpl) NewPreparedSandbox() Sandbox {
@@ -26,15 +30,27 @@ func (f *factoryImpl) NewPreparedSandbox() Sandbox {
 	// - the judge will clean up the sandbox instance after usage, which means the used ID becomes available
 	newID := rand.Uint32() % 1000
 	sandbox := &sandboxImpl{
-		sdkOS:       f.sdkOS,
-		sdkIO:       f.sdkIO,
-		id:          newID,
-		isDestroyed: false,
-		isPrepared:  false,
-		utilsPath:   f.utilsPath,
-		utilsSystem: f.utilsSystem,
+		sdkOS:         f.sdkOS,
+		sdkIO:         f.sdkIO,
+		id:            newID,
+		isDestroyed:   false,
+		isPrepared:    false,
+		isCGSupported: f.isCGSupported,
+		utilsPath:     f.utilsPath,
+		utilsSystem:   f.utilsSystem,
 	}
 	sandbox.Prepare()
 
 	return sandbox
+}
+
+func (f *factoryImpl) init() {
+	// check if control group is supported or not
+	if len(f.sdkOS.Getenv("CONFIG_CPUSETS")) > 0 {
+		f.isCGSupported = true
+		f.logger.Info("CG is supported in current machine")
+	} else {
+		f.isCGSupported = false
+		f.logger.Warn("CG is not supported in current machine")
+	}
 }

@@ -37,12 +37,13 @@ type sandboxImpl struct {
 	sdkOS sdk.OSFunctions
 	sdkIO sdk.IOFunctions
 
-	id          uint32
-	isDestroyed bool
-	isPrepared  bool
-	utilsPath   utils.Path
-	utilsSystem utils.System
-	sandboxDir  string
+	id            uint32
+	isDestroyed   bool
+	isPrepared    bool
+	isCGSupported bool
+	utilsPath     utils.Path
+	utilsSystem   utils.System
+	sandboxDir    string
 }
 
 func (s *sandboxImpl) WriteFile(filename string, stream io.ReadCloser) error {
@@ -84,7 +85,7 @@ func (s *sandboxImpl) Destroy() {
 
 	// destroy / cleanup the sandbox
 	out, err := s.utilsSystem.Execute(
-		"isolate", "--cleanup", fmt.Sprintf("--box-id=%d", s.id),
+		"isolate", fmt.Sprintf("--box-id=%d", s.id), "--cleanup",
 	)
 	// TODO dont print like this
 	fmt.Println(out)
@@ -101,7 +102,7 @@ func (s *sandboxImpl) Prepare() {
 
 	// create sandbox
 	out, err := s.utilsSystem.Execute(
-		"isolate", "--cg", fmt.Sprintf("--box-id=%d", s.id), "--init",
+		"isolate", s.cgOption(), fmt.Sprintf("--box-id=%d", s.id), "--init",
 	)
 	// TODO dont print like this, put sandbox directory to sandboxDir variable
 	fmt.Println(out)
@@ -115,4 +116,11 @@ func (s *sandboxImpl) GetID() uint32 {
 // isActive returns true if the sandbox is already prepared, and not destroyed
 func (s *sandboxImpl) isActive() bool {
 	return s.isPrepared && !s.isDestroyed
+}
+
+func (s *sandboxImpl) cgOption() string {
+	if s.isCGSupported {
+		return "--cg"
+	}
+	return ""
 }

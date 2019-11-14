@@ -35,17 +35,3 @@ func (_m *Path) FudgeDir() string {
 
 	return r0
 }
-
-// IsolateBinary provides a mock function with given fields:
-func (_m *Path) IsolateBinary() string {
-	ret := _m.Called()
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	return r0
-}
