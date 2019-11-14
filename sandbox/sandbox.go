@@ -84,7 +84,7 @@ func (s *sandboxImpl) Destroy() {
 
 	// destroy / cleanup the sandbox
 	out, err := s.utilsSystem.Execute(
-		s.utilsPath.IsolateBinary(), "--cleanup", fmt.Sprintf("--box-id=%d", s.id),
+		"isolate", "--cleanup", fmt.Sprintf("--box-id=%d", s.id),
 	)
 	// TODO dont print like this
 	fmt.Println(out)
@@ -100,9 +100,8 @@ func (s *sandboxImpl) Prepare() {
 	s.isPrepared = true
 
 	// create sandbox
-	fmt.Println("isolate binary: " + s.utilsPath.IsolateBinary())
 	out, err := s.utilsSystem.Execute(
-		s.utilsPath.IsolateBinary(), "--cg", fmt.Sprintf("--box-id=%d", s.id), "--init",
+		"isolate", "--cg", fmt.Sprintf("--box-id=%d", s.id), "--init",
 	)
 	// TODO dont print like this, put sandbox directory to sandboxDir variable
 	fmt.Println(out)

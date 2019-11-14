@@ -8,9 +8,6 @@ import (
 // Path contains methods to return path for various things
 //go:generate mockery -name=Path
 type Path interface {
-	// Isolate returns path to isolate binary
-	IsolateBinary() string
-
 	// BoxDir returns path prefix for the sandbox's box
 	BoxDir() string
 
@@ -21,10 +18,6 @@ type Path interface {
 type pathImpl struct {
 	system System
 	sdkOS  sdk.OSFunctions
-}
-
-func (p *pathImpl) IsolateBinary() string {
-	return "/usr/local/bin/isolate"
 }
 
 func (p *pathImpl) BoxDir() string {

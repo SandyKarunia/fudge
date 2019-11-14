@@ -7,11 +7,6 @@ import (
 	"testing"
 )
 
-func TestPathImpl_IsolateBinary(t *testing.T) {
-	obj := &pathImpl{}
-	assert.Equal(t, "/usr/local/bin/isolate", obj.IsolateBinary())
-}
-
 func TestPathImpl_FudgeDir(t *testing.T) {
 	tests := []struct {
 		desc           string
