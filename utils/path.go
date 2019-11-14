@@ -32,7 +32,12 @@ func (p *pathImpl) FudgeDir() string {
 		homeDir += "/"
 	}
 
-	return homeDir + ".fudge/"
+	fudgeDir := homeDir + ".fudge/"
+
+	// if fudge dir doesn't exist, then create it
+	_, _ = p.system.Execute("mkdir", "-p", fudgeDir)
+
+	return fudgeDir
 }
 
 // ProvidePath ...

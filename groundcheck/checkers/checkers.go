@@ -73,7 +73,7 @@ func (c *checkersImpl) CheckIsolateBinaryValid() bool {
 			"inside the extracted folder, run \"sudo make install\" in command line, this requires libcap-dev library",
 		},
 	}
-	_, err := c.sysUtils.Execute("isolatee", "--version")
+	_, err := c.sysUtils.Execute("isolate", "--version")
 	printPretty(err == nil, msg)
 	return err == nil
 }
