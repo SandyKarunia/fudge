@@ -36,20 +36,6 @@ func (_m *System) Execute(cmd string, args ...string) (string, error) {
 	return r0, r1
 }
 
-// GetFudgeDir provides a mock function with given fields:
-func (_m *System) GetFudgeDir() string {
-	ret := _m.Called()
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	return r0
-}
-
 // IsSudo provides a mock function with given fields:
 func (_m *System) IsSudo() bool {
 	ret := _m.Called()

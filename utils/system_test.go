@@ -2,7 +2,6 @@ package utils
 
 import (
 	"bytes"
-	"errors"
 	"github.com/sandykarunia/fudge/sdk/mocks"
 	"github.com/stretchr/testify/assert"
 	"os/exec"
@@ -85,38 +84,6 @@ func TestSystemImpl_VerifyPkgInstalled(t *testing.T) {
 			} else {
 				assert.NoError(t, res)
 			}
-		})
-	}
-}
-
-func TestSystemImpl_GetFudgeDir(t *testing.T) {
-	tests := []struct {
-		desc           string
-		want           string
-		userHomeDir    string
-		userHomeDirErr error
-	}{
-		{
-			desc:           "user home dir contains error, should NOT return, should continue processing",
-			userHomeDir:    "this/is/home/",
-			userHomeDirErr: errors.New("some error"),
-			want:           "this/is/home/.fudge/",
-		},
-		{
-			desc:        "should add '/' suffix if user home dir doesn't have it",
-			userHomeDir: "this/is/home/no/slash/suffix",
-			want:        "this/is/home/no/slash/suffix/.fudge/",
-		},
-	}
-
-	for _, test := range tests {
-		t.Run(test.desc, func(t *testing.T) {
-			mockOS := &mocks.OSFunctions{}
-			mockOS.On("UserHomeDir").Return(test.userHomeDir, test.userHomeDirErr)
-
-			obj := &systemImpl{os: mockOS}
-			res := obj.GetFudgeDir()
-			assert.Equal(t, test.want, res)
 		})
 	}
 }

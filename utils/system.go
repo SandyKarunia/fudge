@@ -3,7 +3,6 @@ package utils
 import (
 	"errors"
 	"github.com/sandykarunia/fudge/sdk"
-	"strings"
 )
 
 // System ...
@@ -14,9 +13,6 @@ type System interface {
 
 	// VerifyPkgInstalled returns error message if the specified package is NOT installed
 	VerifyPkgInstalled(pkgName string) error
-
-	// GetFudgeDir returns config directory for all fudge related stuff, always ends with "/"
-	GetFudgeDir() string
 
 	// Execute executes a command, and return the output (stdout + stderr) and error
 	Execute(cmd string, args ...string) (string, error)
@@ -43,20 +39,6 @@ func (o *systemImpl) VerifyPkgInstalled(pkgName string) error {
 		return errors.New(string(out))
 	}
 	return nil
-}
-
-func (o *systemImpl) GetFudgeDir() string {
-	homeDir, err := o.os.UserHomeDir()
-	if err != nil {
-		// TODO log error
-	}
-
-	// if it doesn't end with "/", add it
-	if !strings.HasSuffix(homeDir, "/") {
-		homeDir += "/"
-	}
-
-	return homeDir + ".fudge/"
 }
 
 func (o *systemImpl) Execute(name string, args ...string) (string, error) {

@@ -7,7 +7,7 @@ import (
 )
 
 func TestProvider(t *testing.T) {
-	sysMocks := &mocks.System{}
-	sysMocks.On("GetFudgeDir").Return("")
-	assert.Implements(t, (*Logger)(nil), Provider(nil, sysMocks))
+	pathMocks := &mocks.Path{}
+	pathMocks.On("FudgeDir").Return("")
+	assert.Implements(t, (*Logger)(nil), Provider(nil, pathMocks))
 }

@@ -42,8 +42,8 @@ type Logger interface {
 }
 
 type loggerImpl struct {
-	os  sdk.OSFunctions
-	sys utils.System
+	os   sdk.OSFunctions
+	path utils.Path
 
 	_logFileLock   sync.Mutex
 	_logFilePath   string
@@ -135,7 +135,7 @@ func (l *loggerImpl) flushBufferJob() {
 }
 
 func (l *loggerImpl) init() Logger {
-	l._logFilePath = fmt.Sprintf("%slog-%d.txt", l.sys.GetFudgeDir(), time.Now().Unix())
+	l._logFilePath = fmt.Sprintf("%slog-%d.txt", l.path.FudgeDir(), time.Now().Unix())
 	l._logFileBuffer = make(chan string, 1000)
 	go l.flushBufferJob()
 

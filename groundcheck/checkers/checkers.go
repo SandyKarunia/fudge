@@ -67,7 +67,6 @@ func (c *checkersImpl) CheckLibcapDevPkg() bool {
 
 func (c *checkersImpl) CheckIsolateBinaryExists() bool {
 	isolatePath := c.pathUtils.IsolateBinary()
-	fudgeDir := c.sysUtils.GetFudgeDir()
 	msg := &message{
 		success: "Required isolate binary found in " + isolatePath,
 		fail:    "Required isolate binary not found in " + isolatePath,
@@ -76,9 +75,7 @@ func (c *checkersImpl) CheckIsolateBinaryExists() bool {
 			"click on the latest release tag",
 			"download the source code",
 			"extract the source code anywhere you want",
-			"inside the extracted folder, run \"make isolate\" in command line, this requires libcap-dev library",
-			"there should be a generated binary \"isolate\"",
-			"copy \"isolate\" binary into " + fudgeDir + " directory",
+			"inside the extracted folder, run \"make install\" in command line, this requires libcap-dev library",
 		},
 	}
 	exists := c.fileUtils.Exists(isolatePath)

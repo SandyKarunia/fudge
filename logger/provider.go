@@ -6,10 +6,10 @@ import (
 )
 
 // Provider ...
-func Provider(os sdk.OSFunctions, sys utils.System) Logger {
+func Provider(os sdk.OSFunctions, path utils.Path) Logger {
 	obj := &loggerImpl{
-		os:  os,
-		sys: sys,
+		os:   os,
+		path: path,
 	}
 	return obj.init()
 }

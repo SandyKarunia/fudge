@@ -7,10 +7,10 @@ import (
 )
 
 func TestLoggerImpl_NoCrash(t *testing.T) {
-	sysMocks := &utilsmocks.System{}
-	sysMocks.On("GetFudgeDir").Return("")
+	pathMocks := &utilsmocks.Path{}
+	pathMocks.On("FudgeDir").Return("")
 	obj := (&loggerImpl{
-		sys: sysMocks,
+		path: pathMocks,
 	}).init()
 
 	obj.Info("info message no arguments")

@@ -4,10 +4,13 @@ import (
 	"github.com/sandykarunia/fudge/utils/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"math/rand"
 	"testing"
+	"time"
 )
 
 func TestFactoryImpl_NewSandbox(t *testing.T) {
+	rand.Seed(time.Now().UTC().UnixNano())
 	mockPath := &mocks.Path{}
 	mockPath.On("IsolateBinary").Return("")
 	mockSystem := &mocks.System{}
@@ -16,7 +19,7 @@ func TestFactoryImpl_NewSandbox(t *testing.T) {
 
 	// should return different IDs most of the time
 	usedIDs := map[uint32]bool{}
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 5; i++ {
 		sb := obj.NewPreparedSandbox()
 		sbID := sb.GetID()
 
