@@ -27,8 +27,7 @@ func (g *groundCheckImpl) CheckAll() error {
 	var checkerFuncs = []func() bool{
 		g.c.CheckSudo,
 		g.c.CheckLibcapDevPkg,
-		g.c.CheckIsolateBinaryExists,
-		g.c.CheckIsolateBinaryExecutable,
+		g.c.CheckIsolateBinaryValid,
 	}
 
 	// we don't want to interrupt the checks (i.e. put return inside the loop)

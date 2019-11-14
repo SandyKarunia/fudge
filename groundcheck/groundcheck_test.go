@@ -46,7 +46,7 @@ func TestGroundCheckImpl_CheckAll(t *testing.T) {
 
 			mockCheckers.On("CheckSudo").Return(test.checkSudo)
 			mockCheckers.On("CheckLibcapDevPkg").Return(test.checkLibcapDevPkg)
-			mockCheckers.On("CheckIsolateBinaryExists").Return(test.checkIsolateBinaryExists)
+			mockCheckers.On("CheckIsolateBinaryValid").Return(test.checkIsolateBinaryExists)
 			mockCheckers.On("CheckIsolateBinaryExecutable").Return(test.checkIsolateBinaryExecutable)
 
 			obj := &groundCheckImpl{c: mockCheckers}

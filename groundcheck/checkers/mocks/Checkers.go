@@ -22,8 +22,8 @@ func (_m *Checkers) CheckIsolateBinaryExecutable() bool {
 	return r0
 }
 
-// CheckIsolateBinaryExists provides a mock function with given fields:
-func (_m *Checkers) CheckIsolateBinaryExists() bool {
+// CheckIsolateBinaryValid provides a mock function with given fields:
+func (_m *Checkers) CheckIsolateBinaryValid() bool {
 	ret := _m.Called()
 
 	var r0 bool

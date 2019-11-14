@@ -20,12 +20,8 @@ type Checkers interface {
 	// CheckLibcapDevPkg Checks whether libcap-dev package is installed or not
 	CheckLibcapDevPkg() bool
 
-	// CheckIsolateBinaryExists Checks whether isolate binary exists or not
-	CheckIsolateBinaryExists() bool
-
-	// CheckIsolateBinaryExecutable Checks whether isolate binary is real or not
-	// we do this by checking the version of the isolate binary
-	CheckIsolateBinaryExecutable() bool
+	// CheckIsolateBinaryValid Checks whether isolate binary exists and executable or not
+	CheckIsolateBinaryValid() bool
 }
 
 type checkersImpl struct {
@@ -65,40 +61,19 @@ func (c *checkersImpl) CheckLibcapDevPkg() bool {
 	return err == nil
 }
 
-func (c *checkersImpl) CheckIsolateBinaryExists() bool {
-	isolatePath := c.pathUtils.IsolateBinary()
+func (c *checkersImpl) CheckIsolateBinaryValid() bool {
 	msg := &message{
-		success: "Required isolate binary found in " + isolatePath,
-		fail:    "Required isolate binary not found in " + isolatePath,
+		success: "Required isolate binary found and executable",
+		fail:    "Required isolate binary not found or not executable",
 		solve: []string{
 			"go to github.com/ioi/isolate/releases",
 			"click on the latest release tag",
 			"download the source code",
 			"extract the source code anywhere you want",
-			"inside the extracted folder, run \"make install\" in command line, this requires libcap-dev library",
+			"inside the extracted folder, run \"sudo make install\" in command line, this requires libcap-dev library",
 		},
 	}
-	exists := c.fileUtils.Exists(isolatePath)
-	printPretty(exists, msg)
-	return exists
-}
-
-func (c *checkersImpl) CheckIsolateBinaryExecutable() bool {
-	isolatePath := c.pathUtils.IsolateBinary()
-	msg := &message{
-		success: "Required isolate binary is executable",
-		fail:    "Required isolate binary is not executable",
-		solve: []string{
-			"make sure the isolate binary is executable by running '" + isolatePath + " --version' in your command line",
-			"if you got permission denied error, try running 'chmod +x " + isolatePath + "'",
-		},
-	}
-
-	_, err := c.sysUtils.Execute(isolatePath, "--version")
-	if err != nil {
-		// TODO log error
-	}
-
+	_, err := c.sysUtils.Execute("isolatee", "--version")
 	printPretty(err == nil, msg)
 	return err == nil
 }

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/sandykarunia/fudge/utils/mocks"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"testing"
 )
 
@@ -67,71 +68,32 @@ func TestCheckersImpl_CheckLibcapDevPkg(t *testing.T) {
 	}
 }
 
-func TestCheckersImpl_CheckIsolateBinaryExists(t *testing.T) {
-	tests := []struct {
-		desc       string
-		want       bool
-		fileExists bool
-		fudgeDir   string
-	}{
-		{
-			desc:       "file exists",
-			want:       true,
-			fileExists: true,
-			fudgeDir:   "~/fudge",
-		},
-		{
-			desc:       "file doesn't exist",
-			want:       false,
-			fileExists: false,
-			fudgeDir:   "~/fudge",
-		},
-	}
-
-	for _, test := range tests {
-		t.Run(test.desc, func(t *testing.T) {
-			sysMock := &mocks.System{}
-			fileMock := &mocks.File{}
-			pathMock := &mocks.Path{}
-
-			sysMock.On("GetFudgeDir").Return(test.fudgeDir)
-			fileMock.On("Exists", "isolate path").Return(test.fileExists)
-			pathMock.On("IsolateBinary").Return("isolate path")
-
-			obj := &checkersImpl{sysUtils: sysMock, fileUtils: fileMock, pathUtils: pathMock}
-			res := obj.CheckIsolateBinaryExists()
-			assert.Equal(t, test.want, res)
-		})
-	}
-}
-
-func TestCheckersImpl_CheckIsolateBinaryExecutable(t *testing.T) {
+func TestCheckersImpl_CheckIsolateBinaryValid(t *testing.T) {
 	tests := []struct {
 		desc       string
 		want       bool
 		executeErr error
 	}{
 		{
-			desc:       "execute returns error",
-			want:       false,
-			executeErr: errors.New("err"),
-		},
-		{
-			desc:       "execute does not return error",
+			desc:       "binary valid",
 			want:       true,
 			executeErr: nil,
+		},
+		{
+			desc:       "binary invalid",
+			want:       false,
+			executeErr: errors.New("err"),
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.desc, func(t *testing.T) {
-			mockPath := &mocks.Path{}
-			mockPath.On("IsolateBinary").Return("isolatePath")
-			mockSys := &mocks.System{}
-			mockSys.On("Execute", "isolatePath", "--version").Return("", test.executeErr)
+			sysMock := &mocks.System{}
 
-			obj := &checkersImpl{sysUtils: mockSys, pathUtils: mockPath}
-			res := obj.CheckIsolateBinaryExecutable()
+			sysMock.On("Execute", mock.Anything, mock.Anything).Return("", test.executeErr)
+
+			obj := &checkersImpl{sysUtils: sysMock}
+			res := obj.CheckIsolateBinaryValid()
 			assert.Equal(t, test.want, res)
 		})
 	}
