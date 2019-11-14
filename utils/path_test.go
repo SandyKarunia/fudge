@@ -3,7 +3,9 @@ package utils
 import (
 	"errors"
 	sdkMocks "github.com/sandykarunia/fudge/sdk/mocks"
+	utilsMocks "github.com/sandykarunia/fudge/utils/mocks"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"testing"
 )
 
@@ -30,11 +32,14 @@ func TestPathImpl_FudgeDir(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.desc, func(t *testing.T) {
 			mockOS := &sdkMocks.OSFunctions{}
+			mockSystem := &utilsMocks.System{}
 			mockOS.On("UserHomeDir").Return(test.userHomeDir, test.userHomeDirErr)
+			mockSystem.On("Execute", mock.Anything, mock.Anything, mock.Anything).Return("", nil)
 
-			obj := &pathImpl{sdkOS: mockOS}
+			obj := &pathImpl{sdkOS: mockOS, system: mockSystem}
 			res := obj.FudgeDir()
 			assert.Equal(t, test.want, res)
+			mockSystem.AssertCalled(t, "Execute", "mkdir", "-p", test.want)
 		})
 	}
 }
