@@ -2,6 +2,7 @@ package sniffers
 
 import (
 	"github.com/fatih/color"
+	"github.com/sandykarunia/fudge/language"
 	"github.com/sandykarunia/fudge/utils"
 )
 
@@ -15,6 +16,8 @@ type message struct {
 //go:generate mockery -name=Sniffers
 type Sniffers interface {
 	SniffControlGroupSupport()
+	SniffLanguageCppSupport()
+	SniffLanguagePython3Support()
 }
 
 type sniffersImpl struct {
@@ -28,6 +31,22 @@ func (s *sniffersImpl) SniffControlGroupSupport() {
 	}
 	ok := s.sysUtils.IsControlGroupSupported()
 	printPretty(ok, msg)
+}
+
+func (s *sniffersImpl) SniffLanguageCppSupport() {
+	msg := &message{
+		success: "Language: C++ is supported",
+		fail:    "Language: C++ is not supported",
+	}
+	printPretty(s.sysUtils.IsLanguageSupported(&language.Cpp{}), msg)
+}
+
+func (s *sniffersImpl) SniffLanguagePython3Support() {
+	msg := &message{
+		success: "Language: Python 3 is supported",
+		fail:    "Language: Python 3 is not supported",
+	}
+	printPretty(s.sysUtils.IsLanguageSupported(&language.Python3{}), msg)
 }
 
 func printPretty(ok bool, msg *message) {

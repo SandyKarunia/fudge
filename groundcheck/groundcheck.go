@@ -51,6 +51,8 @@ func (g *groundCheckImpl) CheckAll() error {
 func (g *groundCheckImpl) SniffAll() {
 	var snifferFuncs = []func(){
 		g.s.SniffControlGroupSupport,
+		g.s.SniffLanguageCppSupport,
+		g.s.SniffLanguagePython3Support,
 	}
 
 	for _, fn := range snifferFuncs {

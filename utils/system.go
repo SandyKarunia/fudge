@@ -2,6 +2,7 @@ package utils
 
 import (
 	"errors"
+	"github.com/sandykarunia/fudge/language"
 	"github.com/sandykarunia/fudge/sdk"
 )
 
@@ -20,9 +21,12 @@ type System interface {
 	// GetHMACSecretFromEnv returns a secret string for HMAC authentication from environment variable
 	GetHMACSecretFromEnv() string
 
-	// IsControlGroupSuppoerted returns true if control group is supported in current machine
+	// IsControlGroupSupported returns true if control group is supported in current machine
 	// by checking CONFIG_CPUSETS environment variable value
 	IsControlGroupSupported() bool
+
+	// IsLanguageSupported returns true if the programming language is supported in current machine
+	IsLanguageSupported(lang language.Language) bool
 }
 
 type systemImpl struct {
@@ -60,6 +64,13 @@ func (o *systemImpl) GetHMACSecretFromEnv() string {
 
 func (o *systemImpl) IsControlGroupSupported() bool {
 	return len(o.os.Getenv("CONFIG_CPUSETS")) > 0
+}
+
+func (o *systemImpl) IsLanguageSupported(lang language.Language) bool {
+	cmdName, args := lang.GetVersionCmd()
+	cmd := o.exec.Command(cmdName, args...)
+	_, err := cmd.CombinedOutput()
+	return err == nil
 }
 
 // ProvideSystem ...

@@ -7,3 +7,18 @@ import mock "github.com/stretchr/testify/mock"
 type Sniffers struct {
 	mock.Mock
 }
+
+// SniffControlGroupSupport provides a mock function with given fields:
+func (_m *Sniffers) SniffControlGroupSupport() {
+	_m.Called()
+}
+
+// SniffLanguageCppSupport provides a mock function with given fields:
+func (_m *Sniffers) SniffLanguageCppSupport() {
+	_m.Called()
+}
+
+// SniffLanguagePython3Support provides a mock function with given fields:
+func (_m *Sniffers) SniffLanguagePython3Support() {
+	_m.Called()
+}
