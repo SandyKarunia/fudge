@@ -49,26 +49,19 @@ func (s *signatureImpl) IsValidHMACSignature(
 	if durInt < 0 {
 		durInt *= -1
 	}
+
 	// To prevent replay attack that happens sometime after the original request.
 	if durInt > signatureMaxRequestDuration {
 		return false
 	}
 
-	if payload == nil {
-		s := ""
-		payload = &s
-	}
 	return signature == s.hmacSign(timestamp, nonce, secret, payload)
 }
 
-func (*signatureImpl) hmacSign(
-	timestamp time.Time,
-	nonce string,
-	secret string,
-	payload *string,
-) string {
+func (*signatureImpl) hmacSign(timestamp time.Time, nonce string, secret string, payload *string) string {
 	if payload == nil {
-		return ""
+		s := ""
+		payload = &s
 	}
 
 	h := hmac.New(sha256.New, []byte(secret))

@@ -36,7 +36,7 @@ func TestHMACSign(t *testing.T) {
 			"16844d31-037c-4ef4-b80b-7bd80ba515eb",
 			"oS2vtm1A",
 			nil,
-			"",
+			"TI27Vz1c4SGBRwq9VMu/ToZTEUud2k49mY8gzf/PihE=",
 		},
 	}
 

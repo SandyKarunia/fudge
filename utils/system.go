@@ -16,6 +16,9 @@ type System interface {
 
 	// Execute executes a command, and return the output (stdout + stderr) and error
 	Execute(cmd string, args ...string) (string, error)
+
+	// GetHMACSecretFromEnv returns a secret string for HMAC authentication from environment variable
+	GetHMACSecretFromEnv() string
 }
 
 type systemImpl struct {
@@ -45,6 +48,10 @@ func (o *systemImpl) Execute(name string, args ...string) (string, error) {
 	cmd := o.exec.Command(name, args...)
 	out, err := cmd.CombinedOutput()
 	return string(out), err
+}
+
+func (o *systemImpl) GetHMACSecretFromEnv() string {
+	return o.os.Getenv("FUDGE_HMAC")
 }
 
 // ProvideSystem ...
