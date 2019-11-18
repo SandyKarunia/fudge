@@ -9,6 +9,7 @@ import (
 	"github.com/sandykarunia/fudge/grader"
 	"github.com/sandykarunia/fudge/groundcheck"
 	"github.com/sandykarunia/fudge/groundcheck/checkers"
+	"github.com/sandykarunia/fudge/groundcheck/sniffers"
 	"github.com/sandykarunia/fudge/logger"
 	"github.com/sandykarunia/fudge/sandbox"
 	"github.com/sandykarunia/fudge/sdk"
@@ -26,7 +27,8 @@ func Instance() Server {
 	file := utils.ProvideFile(ioFunctions, osFunctions)
 	path := utils.ProvidePath(system, osFunctions)
 	checkersCheckers := checkers.Provider(system, file, path)
-	groundCheck := groundcheck.Provider(checkersCheckers)
+	sniffersSniffers := sniffers.Provider(system)
+	groundCheck := groundcheck.Provider(checkersCheckers, sniffersSniffers)
 	loggerLogger := logger.Provider(osFunctions, path)
 	factory := sandbox.Provider(osFunctions, ioFunctions, path, system, loggerLogger)
 	graderGrader := grader.Provider(factory, loggerLogger)

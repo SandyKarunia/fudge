@@ -3,6 +3,7 @@ package groundcheck
 import (
 	"errors"
 	"github.com/sandykarunia/fudge/groundcheck/checkers"
+	"github.com/sandykarunia/fudge/groundcheck/sniffers"
 )
 
 var (
@@ -13,12 +14,17 @@ var (
 // If it can solve the issue automatically, it will try to solve it
 //go:generate mockery -name=GroundCheck
 type GroundCheck interface {
-	// CheckAll observes the environment / all necessities to run fudge program
+	// CheckAll observes the environment for all necessities to run fudge program
+	// if at least one check failed, then the program should exit
 	CheckAll() error
+
+	// SniffAll() observes the environment for optional necessities to run fudge program
+	SniffAll()
 }
 
 type groundCheckImpl struct {
 	c checkers.Checkers
+	s sniffers.Sniffers
 }
 
 func (g *groundCheckImpl) CheckAll() error {
@@ -40,4 +46,14 @@ func (g *groundCheckImpl) CheckAll() error {
 	}
 
 	return errRes
+}
+
+func (g *groundCheckImpl) SniffAll() {
+	var snifferFuncs = []func(){
+		g.s.SniffControlGroupSupport,
+	}
+
+	for _, fn := range snifferFuncs {
+		fn()
+	}
 }

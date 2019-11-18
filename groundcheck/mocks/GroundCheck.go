@@ -21,3 +21,8 @@ func (_m *GroundCheck) CheckAll() error {
 
 	return r0
 }
+
+// SniffAll provides a mock function with given fields:
+func (_m *GroundCheck) SniffAll() {
+	_m.Called()
+}

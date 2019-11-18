@@ -7,6 +7,7 @@ import (
 	"github.com/sandykarunia/fudge/grader"
 	"github.com/sandykarunia/fudge/groundcheck"
 	"github.com/sandykarunia/fudge/groundcheck/checkers"
+	"github.com/sandykarunia/fudge/groundcheck/sniffers"
 	"github.com/sandykarunia/fudge/logger"
 	"github.com/sandykarunia/fudge/sandbox"
 	"github.com/sandykarunia/fudge/sdk"
@@ -24,6 +25,7 @@ func Instance() Server {
 		logger.Provider,
 		sandbox.Provider,
 		sdk.Providers,
+		sniffers.Provider,
 		utils.Providers,
 	)
 	return &serverImpl{}
