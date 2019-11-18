@@ -10,7 +10,7 @@ import (
 // Factory is an interface for sandbox factory
 type Factory interface {
 	// NewPreparedSandbox produces new prepared sandbox instance with random ID
-	NewPreparedSandbox() Sandbox
+	NewPreparedSandbox() (Sandbox, error)
 }
 
 type factoryImpl struct {
@@ -23,7 +23,7 @@ type factoryImpl struct {
 	isCGSupported bool
 }
 
-func (f *factoryImpl) NewPreparedSandbox() Sandbox {
+func (f *factoryImpl) NewPreparedSandbox() (Sandbox, error) {
 	// we don't need to check if the newID exists or not, since:
 	// - by right, each machine only have 1 judge
 	// - the range of ID is 0-999
@@ -39,14 +39,14 @@ func (f *factoryImpl) NewPreparedSandbox() Sandbox {
 		utilsPath:     f.utilsPath,
 		utilsSystem:   f.utilsSystem,
 	}
-	sandbox.Prepare()
+	err := sandbox.Prepare()
 
-	return sandbox
+	return sandbox, err
 }
 
 func (f *factoryImpl) init() {
 	// check if control group is supported or not
-	if len(f.sdkOS.Getenv("CONFIG_CPUSETS")) > 0 {
+	if f.utilsSystem.IsControlGroupSupported() {
 		f.isCGSupported = true
 		f.logger.Info("CG is supported in current machine")
 	} else {

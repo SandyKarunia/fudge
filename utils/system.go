@@ -19,6 +19,10 @@ type System interface {
 
 	// GetHMACSecretFromEnv returns a secret string for HMAC authentication from environment variable
 	GetHMACSecretFromEnv() string
+
+	// IsControlGroupSuppoerted returns true if control group is supported in current machine
+	// by checking CONFIG_CPUSETS environment variable value
+	IsControlGroupSupported() bool
 }
 
 type systemImpl struct {
@@ -52,6 +56,10 @@ func (o *systemImpl) Execute(name string, args ...string) (string, error) {
 
 func (o *systemImpl) GetHMACSecretFromEnv() string {
 	return o.os.Getenv("FUDGE_HMAC")
+}
+
+func (o *systemImpl) IsControlGroupSupported() bool {
+	return len(o.os.Getenv("CONFIG_CPUSETS")) > 0
 }
 
 // ProvideSystem ...

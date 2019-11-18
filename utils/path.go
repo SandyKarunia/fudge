@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"github.com/sandykarunia/fudge/sdk"
 	"strings"
 )
@@ -8,8 +9,8 @@ import (
 // Path contains methods to return path for various things
 //go:generate mockery -name=Path
 type Path interface {
-	// BoxDir returns path prefix for the sandbox's box
-	BoxDir() string
+	// BoxDir returns directory for sandbox
+	BoxDir(sandboxID uint32) string
 
 	// FudgeDir returns directory for fudge program
 	FudgeDir() string
@@ -20,8 +21,8 @@ type pathImpl struct {
 	sdkOS  sdk.OSFunctions
 }
 
-func (p *pathImpl) BoxDir() string {
-	return "/var/local/lib/isolate/"
+func (p *pathImpl) BoxDir(sandboxID uint32) string {
+	return fmt.Sprintf("/var/local/lib/isolate/%d/box/", sandboxID)
 }
 
 func (p *pathImpl) FudgeDir() string {

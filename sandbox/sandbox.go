@@ -24,10 +24,10 @@ type Sandbox interface {
 	Run(commands ...string) error
 
 	// Destroy the sandbox instance, after it is destroyed, we should not use the sandbox anymore
-	Destroy()
+	Destroy() error
 
 	// Prepare the sandbox instance, it has to be prepared first before the sandbox is used
-	Prepare()
+	Prepare() error
 
 	// GetID returns id
 	GetID() uint32
@@ -43,7 +43,6 @@ type sandboxImpl struct {
 	isCGSupported bool
 	utilsPath     utils.Path
 	utilsSystem   utils.System
-	sandboxDir    string
 }
 
 func (s *sandboxImpl) WriteFile(filename string, stream io.ReadCloser) error {
@@ -52,7 +51,7 @@ func (s *sandboxImpl) WriteFile(filename string, stream io.ReadCloser) error {
 	}
 
 	// Create / Open the file
-	out, err := s.sdkOS.Create(s.sandboxDir + filename)
+	out, err := s.sdkOS.Create(s.utilsPath.BoxDir(s.id) + filename)
 	if err != nil {
 		return err
 	}
@@ -77,36 +76,35 @@ func (s *sandboxImpl) Run(commands ...string) error {
 	panic("implement me")
 }
 
-func (s *sandboxImpl) Destroy() {
+func (s *sandboxImpl) Destroy() error {
 	if !s.isActive() || s.isDestroyed {
-		return
+		return nil
 	}
 	s.isDestroyed = true
 
 	// destroy / cleanup the sandbox
-	out, err := s.utilsSystem.Execute(
-		"isolate", fmt.Sprintf("--box-id=%d", s.id), "--cleanup",
-	)
-	// TODO dont print like this
-	fmt.Println(out)
-	fmt.Println(err)
-
-	panic("implement me")
+	var args []string
+	args = append(args, fmt.Sprintf("--box-id=%d", s.id))
+	args = append(args, "--cleanup")
+	_, err := s.utilsSystem.Execute("isolate", args...)
+	return err
 }
 
-func (s *sandboxImpl) Prepare() {
+func (s *sandboxImpl) Prepare() error {
 	if s.isPrepared || s.isDestroyed {
-		return
+		return nil
 	}
 	s.isPrepared = true
 
 	// create sandbox
-	out, err := s.utilsSystem.Execute(
-		"isolate", s.cgOption(), fmt.Sprintf("--box-id=%d", s.id), "--init",
-	)
-	// TODO dont print like this, put sandbox directory to sandboxDir variable
-	fmt.Println(out)
-	fmt.Println(err)
+	var args []string
+	if s.isCGSupported {
+		args = append(args, "--cg")
+	}
+	args = append(args, fmt.Sprintf("--box-id=%d", s.id))
+	args = append(args, "--init")
+	_, err := s.utilsSystem.Execute("isolate", args...)
+	return err
 }
 
 func (s *sandboxImpl) GetID() uint32 {
@@ -116,11 +114,4 @@ func (s *sandboxImpl) GetID() uint32 {
 // isActive returns true if the sandbox is already prepared, and not destroyed
 func (s *sandboxImpl) isActive() bool {
 	return s.isPrepared && !s.isDestroyed
-}
-
-func (s *sandboxImpl) cgOption() string {
-	if s.isCGSupported {
-		return "--cg"
-	}
-	return ""
 }

@@ -81,8 +81,15 @@ func (g *graderImpl) doGrade(
 	// all operations below are inside the sandbox
 
 	g.changeStatus(StatusPrepare, "Preparing sandbox")
-	sb := g.sbFactory.NewPreparedSandbox()
+	sb, err := g.sbFactory.NewPreparedSandbox()
+	if err != nil {
+		g.logger.Error("Failed to prepare sandbox, err = %s", err.Error())
+		return
+	}
 	g.logger.Info("Sandbox prepared with box-id = %d", sb.GetID())
+
+	// TODO compile code first (COMPILING)
+	g.changeStatus(StatusCompiling, "Compiling source code")
 
 	// TODO fetch input, put into file (FETCH_INPUT)
 	g.changeStatus(StatusFetchInput, "Fetching input data")
@@ -96,9 +103,13 @@ func (g *graderImpl) doGrade(
 	// TODO notify result (NOTIFY_RESULT)
 	g.changeStatus(StatusNotifyResult, "Notifying result via webhook HTTP request")
 
-	// TODO cleanup sandbox (CLEAN_UP)
-	//g.changeStatus(StatusCleanUp, "Cleaning up sandbox with box-id = %d", sb.GetID())
-
+	g.changeStatus(StatusCleanUp, "Cleaning up sandbox with box-id = %d", sb.GetID())
+	err = sb.Destroy()
+	if err != nil {
+		g.logger.Error("Failed to clean up sandbox with box-id = %d, err = %s", sb.GetID(), err.Error())
+		return
+	}
+	g.logger.Info("Sandbox with box-id = %d has been cleaned up", sb.GetID())
 }
 
 // a helper function to help grader change its status

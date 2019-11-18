@@ -16,6 +16,7 @@ type Status string
 const (
 	StatusAcknowledged        = "ACKNOWLEDGED"
 	StatusCleanUp             = "CLEAN_UP"
+	StatusCompiling           = "COMPILING"
 	StatusFetchInput          = "FETCH_INPUT"
 	StatusFetchOutput         = "FETCH_OUTPUT"
 	StatusGrading             = "GRADING"

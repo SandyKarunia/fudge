@@ -8,13 +8,13 @@ type Path struct {
 	mock.Mock
 }
 
-// BoxDir provides a mock function with given fields:
-func (_m *Path) BoxDir() string {
-	ret := _m.Called()
+// BoxDir provides a mock function with given fields: sandboxID
+func (_m *Path) BoxDir(sandboxID uint32) string {
+	ret := _m.Called(sandboxID)
 
 	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(uint32) string); ok {
+		r0 = rf(sandboxID)
 	} else {
 		r0 = ret.Get(0).(string)
 	}

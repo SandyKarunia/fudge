@@ -20,7 +20,7 @@ func TestFactoryImpl_NewSandbox(t *testing.T) {
 	// should return different IDs most of the time
 	usedIDs := map[uint32]bool{}
 	for i := 0; i < 5; i++ {
-		sb := obj.NewPreparedSandbox()
+		sb, _ := obj.NewPreparedSandbox()
 		sbID := sb.GetID()
 
 		assert.NotContains(t, usedIDs, sbID, "usedIDs map contains duplicate ID %d", sbID)
