@@ -67,7 +67,7 @@ func (o *systemImpl) IsControlGroupSupported() bool {
 }
 
 func (o *systemImpl) IsLanguageSupported(lang language.Language) bool {
-	cmdName, args := lang.GetVersionCmd()
+	cmdName, args := lang.VersionCmd()
 	cmd := o.exec.Command(cmdName, args...)
 	_, err := cmd.CombinedOutput()
 	return err == nil

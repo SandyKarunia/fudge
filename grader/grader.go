@@ -5,6 +5,7 @@ import (
 	"github.com/sandykarunia/fudge/language"
 	"github.com/sandykarunia/fudge/logger"
 	"github.com/sandykarunia/fudge/sandbox"
+	"github.com/sandykarunia/fudge/utils"
 	"io/ioutil"
 	"strings"
 	"sync"
@@ -47,6 +48,8 @@ type graderImpl struct {
 
 	// deps
 	logger logger.Logger
+
+	utilsString utils.String
 }
 
 func (g *graderImpl) Status() Status {
@@ -96,7 +99,8 @@ func (g *graderImpl) doGrade(payload *GradeAsyncPayload) {
 
 	// prepare submission code
 	g.changeStatus(StatusPrepareSubmissionCode, "Preparing submission code")
-	err = sb.WriteFile("submission_code", ioutil.NopCloser(strings.NewReader(payload.SubmissionCode)))
+	submissionCodeFilename := g.utilsString.GenerateRandomAlphanumeric(8)
+	err = sb.WriteFile(submissionCodeFilename, ioutil.NopCloser(strings.NewReader(payload.SubmissionCode)))
 	if err != nil {
 		g.logger.Error("Failed to prepare submission code, err = %s", err.Error())
 		return

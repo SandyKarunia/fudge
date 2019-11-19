@@ -31,7 +31,8 @@ func Instance() Server {
 	groundCheck := groundcheck.Provider(checkersCheckers, sniffersSniffers)
 	loggerLogger := logger.Provider(osFunctions, path)
 	factory := sandbox.Provider(osFunctions, ioFunctions, path, system, loggerLogger)
-	graderGrader := grader.Provider(factory, loggerLogger)
+	utilsString := utils.ProvideString()
+	graderGrader := grader.Provider(factory, loggerLogger, utilsString)
 	handlerHandler := handler.Provider(graderGrader, loggerLogger)
 	server := Provider(groundCheck, handlerHandler, loggerLogger)
 	return server

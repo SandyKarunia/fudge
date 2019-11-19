@@ -2,11 +2,14 @@ package language
 
 // Language is an interface for a programming language supported in fudge
 type Language interface {
-	// GetVersionCmd returns the cmd and arguments to check the version of the programming language in current machine
-	GetVersionCmd() (string, []string)
-
 	// Name returns the name of the programming language
 	Name() string
+
+	// VersionCmd returns the cmd and arguments to check the version of the programming language in current machine
+	VersionCmd() (string, []string)
+
+	// CompileCmd returns the cmd and arguments to compile a file in this language
+	CompileCmd(filename string, outputFilename string) (string, []string)
 }
 
 // list of all languages available, since they are stateless, we can store them globally
