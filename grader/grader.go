@@ -2,6 +2,7 @@ package grader
 
 import (
 	"fmt"
+	"github.com/sandykarunia/fudge/language"
 	"github.com/sandykarunia/fudge/logger"
 	"github.com/sandykarunia/fudge/sandbox"
 	"sync"
@@ -15,12 +16,21 @@ type Grader interface {
 
 	// GradeAsync is the main body of the grader which will grade the requested submission asynchronously.
 	// Checks the status of the grader first before grading, returns false if it is not idle
-	GradeAsync(
-		uuid string,
-		submissionCode, gradingCode string,
-		gradingMethod Method,
-		memoryLimitKB, timeLimitMS int64,
-		inputURL, outputURL []string) bool
+	GradeAsync(payload *GradeAsyncPayload) bool
+}
+
+// GradeAsyncPayload ...
+type GradeAsyncPayload struct {
+	UUID               string
+	SubmissionCode     string
+	SubmissionLanguage language.Language
+	GradingCode        string
+	GradingLanguage    language.Language
+	GradingMethod      Method
+	MemoryLimitKB      int64
+	TimeLimitMS        int64
+	InputURL           []string
+	OutputURL          []string
 }
 
 type graderImpl struct {
@@ -41,13 +51,12 @@ func (g *graderImpl) Status() Status {
 	return g.status
 }
 
-func (g *graderImpl) GradeAsync(
-	uuid string,
-	submissionCode, gradingCode string,
-	gradingMethod Method,
-	memoryLimitKB, timeLimitMS int64,
-	inputURL, outputURL []string) bool {
-	g.logger.Info("GradeAsync triggered with uuid %s", uuid)
+func (g *graderImpl) GradeAsync(payload *GradeAsyncPayload) bool {
+	if payload == nil {
+		return false
+	}
+
+	g.logger.Info("GradeAsync triggered with UUID %s", payload.UUID)
 	// check grader status first, if there is another grader that is running (i.e. status != idle), then return false
 	// use check-lock-check pattern
 	if g.status != StatusIdle {
@@ -60,19 +69,15 @@ func (g *graderImpl) GradeAsync(
 	}
 
 	// change grader status first before return
-	g.changeStatus(StatusAcknowledged, "Successfully triggered GradeAsync with uuid %s", uuid)
+	g.changeStatus(StatusAcknowledged, "Successfully triggered GradeAsync with UUID %s", payload.UUID)
 
 	// run the grading main flow in different thread
-	go g.doGrade(submissionCode, gradingCode, gradingMethod, memoryLimitKB, timeLimitMS, inputURL, outputURL)
+	go g.doGrade(payload)
 
 	return true
 }
 
-func (g *graderImpl) doGrade(
-	submissionCode, gradingCode string,
-	gradingMethod Method,
-	memoryLimitKB, timeLimitMS int64,
-	inputURL, outputURL []string) {
+func (g *graderImpl) doGrade(payload *GradeAsyncPayload) {
 	// always set to idle after everything has finished
 	defer func() {
 		g.changeStatus(StatusIdle, "End of doGrade function")

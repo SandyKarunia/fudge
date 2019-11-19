@@ -35,18 +35,18 @@ func (s *sniffersImpl) SniffControlGroupSupport() {
 
 func (s *sniffersImpl) SniffLanguageCppSupport() {
 	msg := &message{
-		success: "Language: C++ is supported",
-		fail:    "Language: C++ is not supported",
+		success: "SubmissionLanguage: C++ is supported",
+		fail:    "SubmissionLanguage: C++ is not supported",
 	}
-	printPretty(s.sysUtils.IsLanguageSupported(&language.Cpp{}), msg)
+	printPretty(s.sysUtils.IsLanguageSupported(language.CPP), msg)
 }
 
 func (s *sniffersImpl) SniffLanguagePython3Support() {
 	msg := &message{
-		success: "Language: Python 3 is supported",
-		fail:    "Language: Python 3 is not supported",
+		success: "SubmissionLanguage: Python 3 is supported",
+		fail:    "SubmissionLanguage: Python 3 is not supported",
 	}
-	printPretty(s.sysUtils.IsLanguageSupported(&language.Python3{}), msg)
+	printPretty(s.sysUtils.IsLanguageSupported(language.Python3), msg)
 }
 
 func printPretty(ok bool, msg *message) {

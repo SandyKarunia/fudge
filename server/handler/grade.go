@@ -3,6 +3,8 @@ package handler
 import (
 	"encoding/json"
 	"github.com/google/uuid"
+	"github.com/sandykarunia/fudge/grader"
+	"github.com/sandykarunia/fudge/language"
 	"net/http"
 )
 
@@ -35,10 +37,22 @@ func (h *handlerImpl) Grade(w http.ResponseWriter, r *http.Request) {
 	// this uuid will be used when the judge notifies the server
 	newUUID := uuid.New().String()
 
+	// build grade async payload
+	gradeAsyncPayload := &grader.GradeAsyncPayload{
+		UUID:               newUUID,
+		SubmissionCode:     payload.SubmissionCode,
+		SubmissionLanguage: language.Get(payload.SubmissionLanguage),
+		GradingCode:        payload.GradingCode,
+		GradingLanguage:    language.Get(payload.GradingLanguage),
+		GradingMethod:      payload.GradingMethod,
+		MemoryLimitKB:      payload.MemoryLimitKB,
+		TimeLimitMS:        payload.TimeLimitMS,
+		InputURL:           payload.InputURL,
+		OutputURL:          payload.OutputURL,
+	}
+
 	// try to grade asynchronously
-	if !h.grader.GradeAsync(
-		newUUID, payload.SubmissionCode, payload.GradingCode, payload.GradingMethod, payload.MemoryLimitKB,
-		payload.TimeLimitMS, payload.InputURL, payload.OutputURL) {
+	if !h.grader.GradeAsync(gradeAsyncPayload) {
 		h.logger.Warn("Grader is busy with status %s", h.grader.Status())
 		w.WriteHeader(http.StatusConflict)
 		return

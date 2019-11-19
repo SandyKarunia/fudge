@@ -1,9 +1,13 @@
 package language
 
-// Python3 ...
-type Python3 struct{}
+// python3 ...
+type python3 struct{}
 
 // GetVersionCmd ...
-func (*Python3) GetVersionCmd() (string, []string) {
+func (*python3) GetVersionCmd() (string, []string) {
 	return "python3", []string{"--version"}
+}
+
+func (*python3) Name() string {
+	return "PYTHON3"
 }

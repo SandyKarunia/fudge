@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"github.com/sandykarunia/fudge/grader"
+	"github.com/sandykarunia/fudge/language"
 	"regexp"
 	"strings"
 )
@@ -10,6 +11,9 @@ import (
 type gradeReq struct {
 	// required, submission code to be compiled and graded
 	SubmissionCode string `json:"submission_code"`
+
+	// required, programming language of the submission, language has to be valid
+	SubmissionLanguage string `json:"submission_language"`
 
 	// optional, can be GRADE_ALL or GRADE_UNTIL_FAIL, defaults to GRADE_UNTIL_FAIL
 	GradingMethod grader.Method `json:"grading_method"`
@@ -27,6 +31,9 @@ type gradeReq struct {
 	// If this is supplied, judge will ignore "output" and "outputURL" in the payload, and use this code to judge
 	// instead.
 	GradingCode string `json:"grading_code"`
+
+	// optional, required if GradingCode exists
+	GradingLanguage string `json:"grading_language"`
 
 	// required, list of input URL & output URL for test cases
 	// if inputURL and outputURL have different ranges, the request will be rejected
@@ -46,12 +53,27 @@ type gradeReq struct {
 
 func (payload *gradeReq) validate() []string {
 	var errors []string
+
+	// check submission code
 	if len(payload.SubmissionCode) == 0 {
 		errors = append(errors, "submission_code can't be empty")
 	}
+
+	// check submission language
+	if language.Get(payload.SubmissionLanguage) == nil {
+		errors = append(errors, fmt.Sprintf("unknown submission language: %s", payload.SubmissionLanguage))
+	}
+
+	// check grading language if grading code is not empty
+	if len(payload.GradingCode) > 0 && language.Get(payload.GradingLanguage) == nil {
+		errors = append(errors, fmt.Sprintf("unknown grading language: %s", payload.GradingLanguage))
+	}
+
+	// check grading method
 	if payload.GradingMethod != grader.GradeAll && payload.GradingMethod != grader.GradeUntilFail {
 		errors = append(errors, fmt.Sprintf("grading_method must be either %s or %s", grader.GradeAll, grader.GradeUntilFail))
 	}
+
 	// hard code to 128MB
 	maxMemoryLimitKB := int64(128 * 1024)
 	if payload.MemoryLimitKB > maxMemoryLimitKB {
@@ -62,6 +84,8 @@ func (payload *gradeReq) validate() []string {
 	if payload.TimeLimitMS > maxTimeLimitMS {
 		errors = append(errors, fmt.Sprintf("time_limit_ms value must be less or equal than %d", maxTimeLimitMS))
 	}
+
+	// check input output URLs
 	if len(payload.InputURL) != 2 {
 		errors = append(errors, fmt.Sprintf("input_url must be an array with length equals to 2"))
 	}

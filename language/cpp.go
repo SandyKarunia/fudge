@@ -1,9 +1,11 @@
 package language
 
-// Cpp ...
-type Cpp struct{}
+type cpp struct{}
 
-// GetVersionCmd ...
-func (*Cpp) GetVersionCmd() (string, []string) {
+func (*cpp) GetVersionCmd() (string, []string) {
 	return "g++", []string{"--version"}
+}
+
+func (*cpp) Name() string {
+	return "CPP"
 }
