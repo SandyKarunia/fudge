@@ -5,6 +5,8 @@ import (
 	"github.com/sandykarunia/fudge/language"
 	"github.com/sandykarunia/fudge/logger"
 	"github.com/sandykarunia/fudge/sandbox"
+	"io/ioutil"
+	"strings"
 	"sync"
 )
 
@@ -83,15 +85,23 @@ func (g *graderImpl) doGrade(payload *GradeAsyncPayload) {
 		g.changeStatus(StatusIdle, "End of doGrade function")
 	}()
 
-	// all operations below are inside the sandbox
-
-	g.changeStatus(StatusPrepare, "Preparing sandbox")
+	// prepare sandbox
+	g.changeStatus(StatusPrepareSandbox, "Preparing sandbox")
 	sb, err := g.sbFactory.NewPreparedSandbox()
 	if err != nil {
 		g.logger.Error("Failed to prepare sandbox, err = %s", err.Error())
 		return
 	}
 	g.logger.Info("Sandbox prepared with box-id = %d", sb.GetID())
+
+	// prepare submission code
+	g.changeStatus(StatusPrepareSubmissionCode, "Preparing submission code")
+	err = sb.WriteFile("submission_code", ioutil.NopCloser(strings.NewReader(payload.SubmissionCode)))
+	if err != nil {
+		g.logger.Error("Failed to prepare submission code, err = %s", err.Error())
+		return
+	}
+	g.logger.Info("Submission code prepared")
 
 	// TODO compile code first (COMPILING)
 	g.changeStatus(StatusCompiling, "Compiling source code")

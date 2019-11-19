@@ -14,13 +14,14 @@ type Status string
 
 // available status
 const (
-	StatusAcknowledged        = "ACKNOWLEDGED"
-	StatusCleanUp             = "CLEAN_UP"
-	StatusCompiling           = "COMPILING"
-	StatusFetchInput          = "FETCH_INPUT"
-	StatusFetchOutput         = "FETCH_OUTPUT"
-	StatusGrading             = "GRADING"
-	StatusIdle         Status = "IDLE"
-	StatusNotifyResult        = "NOTIFY_RESULT"
-	StatusPrepare             = "PREPARE"
+	StatusAcknowledged          Status = "ACKNOWLEDGED"
+	StatusCleanUp                      = "CLEAN_UP"
+	StatusCompiling                    = "COMPILING"
+	StatusFetchInput                   = "FETCH_INPUT"
+	StatusFetchOutput                  = "FETCH_OUTPUT"
+	StatusGrading                      = "GRADING"
+	StatusIdle                         = "IDLE"
+	StatusNotifyResult                 = "NOTIFY_RESULT"
+	StatusPrepareSandbox               = "PREPARE_SANDBOX"
+	StatusPrepareSubmissionCode        = "PREPARE_SUBMISSION_CODE"
 )

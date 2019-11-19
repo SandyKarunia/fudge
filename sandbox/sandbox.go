@@ -21,7 +21,7 @@ type Sandbox interface {
 	GetFile(fileName string) (*os.File, error)
 
 	// Run runs commands inside the sandbox instance
-	Run(commands ...string) error
+	Run(commands string, args ...string) error
 
 	// Destroy the sandbox instance, after it is destroyed, we should not use the sandbox anymore
 	Destroy() error
@@ -69,7 +69,7 @@ func (s *sandboxImpl) GetFile(fileName string) (*os.File, error) {
 	panic("implement me")
 }
 
-func (s *sandboxImpl) Run(commands ...string) error {
+func (s *sandboxImpl) Run(command string, args ...string) error {
 	if !s.isActive() {
 		return fmt.Errorf(sandboxInactiveErrFmt, s.id, "Run")
 	}
