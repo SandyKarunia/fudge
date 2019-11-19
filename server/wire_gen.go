@@ -7,6 +7,7 @@ package server
 
 import (
 	"github.com/sandykarunia/fudge/grader"
+	"github.com/sandykarunia/fudge/grader/taskrunner"
 	"github.com/sandykarunia/fudge/groundcheck"
 	"github.com/sandykarunia/fudge/groundcheck/checkers"
 	"github.com/sandykarunia/fudge/groundcheck/sniffers"
@@ -32,7 +33,8 @@ func Instance() Server {
 	loggerLogger := logger.Provider(osFunctions, path)
 	factory := sandbox.Provider(osFunctions, ioFunctions, path, system, loggerLogger)
 	utilsString := utils.ProvideString()
-	graderGrader := grader.Provider(factory, loggerLogger, utilsString)
+	taskRunner := taskrunner.Provider(factory, loggerLogger, utilsString)
+	graderGrader := grader.Provider(loggerLogger, taskRunner)
 	handlerHandler := handler.Provider(graderGrader, loggerLogger)
 	server := Provider(groundCheck, handlerHandler, loggerLogger)
 	return server

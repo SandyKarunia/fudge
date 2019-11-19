@@ -2,12 +2,10 @@ package grader
 
 import (
 	"fmt"
+	"github.com/sandykarunia/fudge/grader/taskrunner"
 	"github.com/sandykarunia/fudge/language"
 	"github.com/sandykarunia/fudge/logger"
 	"github.com/sandykarunia/fudge/sandbox"
-	"github.com/sandykarunia/fudge/utils"
-	"io/ioutil"
-	"strings"
 	"sync"
 )
 
@@ -43,13 +41,8 @@ type graderImpl struct {
 	// a lock to prevent multiple grading at a time
 	graderLock sync.Mutex
 
-	// factory for sandbox
-	sbFactory sandbox.Factory
-
-	// deps
-	logger logger.Logger
-
-	utilsString utils.String
+	taskRunner taskrunner.TaskRunner
+	logger     logger.Logger
 }
 
 func (g *graderImpl) Status() Status {
@@ -88,26 +81,25 @@ func (g *graderImpl) doGrade(payload *GradeAsyncPayload) {
 		g.changeStatus(StatusIdle, "End of doGrade function")
 	}()
 
+	// vars
+	var sb sandbox.Sandbox
+	var submissionCodeFilename string
+	var err error
+
 	// prepare sandbox
 	g.changeStatus(StatusPrepareSandbox, "Preparing sandbox")
-	sb, err := g.sbFactory.NewPreparedSandbox()
-	if err != nil {
-		g.logger.Error("Failed to prepare sandbox, err = %s", err.Error())
+	if sb, err = g.taskRunner.PrepareSandbox(); err != nil {
 		return
 	}
-	g.logger.Info("Sandbox prepared with box-id = %d", sb.GetID())
 
 	// prepare submission code
 	g.changeStatus(StatusPrepareSubmissionCode, "Preparing submission code")
-	submissionCodeFilename := g.utilsString.GenerateRandomAlphanumeric(8)
-	err = sb.WriteFile(submissionCodeFilename, ioutil.NopCloser(strings.NewReader(payload.SubmissionCode)))
-	if err != nil {
-		g.logger.Error("Failed to prepare submission code, err = %s", err.Error())
+	if submissionCodeFilename, err = g.taskRunner.PrepareSubmissionCode(sb, payload.SubmissionCode); err != nil {
 		return
 	}
-	g.logger.Info("Submission code prepared")
 
 	// TODO compile code first (COMPILING)
+	fmt.Println("TODO COMPILE " + submissionCodeFilename)
 	g.changeStatus(StatusCompiling, "Compiling source code")
 
 	// TODO fetch input, put into file (FETCH_INPUT)

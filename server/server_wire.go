@@ -5,6 +5,7 @@ package server
 import (
 	"github.com/google/wire"
 	"github.com/sandykarunia/fudge/grader"
+	"github.com/sandykarunia/fudge/grader/taskrunner"
 	"github.com/sandykarunia/fudge/groundcheck"
 	"github.com/sandykarunia/fudge/groundcheck/checkers"
 	"github.com/sandykarunia/fudge/groundcheck/sniffers"
@@ -26,6 +27,7 @@ func Instance() Server {
 		sandbox.Provider,
 		sdk.Providers,
 		sniffers.Provider,
+		taskrunner.Provider,
 		utils.Providers,
 	)
 	return &serverImpl{}
