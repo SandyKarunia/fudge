@@ -21,8 +21,21 @@ type Sandbox interface {
 	// we only need the filename because the file / folder structure is flat
 	GetFile(fileName string) (*os.File, error)
 
-	// Run runs commands inside the sandbox instance
-	Run(commands string, args ...string) error
+	// Run runs a command inside the sandbox instance
+	// - timeLimitMS = the run-time limit for the program to run in milliseconds,
+	//   also limits the wall-time to be 2*timeLimitMs
+	// - memoryLimitKB = limit memory usage of the program in KB
+	// - fileSizeLimitKB = limit file size created by the program, it supports multiple files
+	// - stdinFile = redirect stdin from file, it has to be accessible from inside the sandbox,
+	//   it can be empty which means no stdin
+	// - stdoutFile = redirect stdout to a file, it has to be accessible from inside the sandbox, by default we redirect
+	//   stderr to stdout.
+	// - metaFile = output metadata (extra information about the run) to a file
+	Run(
+		timeLimitMS, memoryLimitKB, fileSizeLimitKB int64,
+		stdinFile, stdoutFile, metaFile string,
+		command string, args ...string,
+	) error
 
 	// Destroy the sandbox instance, after it is destroyed, we should not use the sandbox anymore
 	Destroy() error
@@ -70,7 +83,11 @@ func (s *sandboxImpl) GetFile(fileName string) (*os.File, error) {
 	panic("implement me")
 }
 
-func (s *sandboxImpl) Run(command string, args ...string) error {
+func (s *sandboxImpl) Run(
+	timeLimitMS, memoryLimitKB, fileSizeLimitKB int64,
+	stdinFile, stdoutFile, metaFile string,
+	command string, args ...string,
+) error {
 	if !s.isActive() {
 		return fmt.Errorf(sandboxInactiveErrFmt, s.id, "Run")
 	}
@@ -78,10 +95,20 @@ func (s *sandboxImpl) Run(command string, args ...string) error {
 	var isolateArgs []string
 	isolateArgs = append(isolateArgs,
 		fmt.Sprintf("--box-id=%d", s.id),
-		"--run",
-		"--",
-		command,
+		fmt.Sprintf("--meta=%s", metaFile),
+		fmt.Sprintf("--stdout=%s", stdoutFile),
+		fmt.Sprintf("--fsize=%d", fileSizeLimitKB),
+		fmt.Sprintf("--time=%.3f", float64(timeLimitMS)/1000.0),
 	)
+	if s.isCGSupported {
+		isolateArgs = append(isolateArgs, "--cg", fmt.Sprintf("--cg-mem=%d", memoryLimitKB))
+	} else {
+		isolateArgs = append(isolateArgs, fmt.Sprintf("--mem=%d", memoryLimitKB))
+	}
+	if len(stdinFile) > 0 {
+		isolateArgs = append(isolateArgs, fmt.Sprintf("--stdin=%s", stdinFile))
+	}
+	isolateArgs = append(isolateArgs, "--", command)
 	isolateArgs = append(isolateArgs, args...)
 
 	_, err := s.utilsSystem.Execute(isolateCmd, isolateArgs...)
