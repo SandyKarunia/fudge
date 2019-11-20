@@ -9,6 +9,7 @@ import (
 )
 
 const sandboxInactiveErrFmt = "sandbox: id %d is inactive, can't execute %s"
+const isolateCmd = "isolate"
 
 // Sandbox is an interface of sandbox instance, the file / folder structure inside is flat
 type Sandbox interface {
@@ -73,7 +74,18 @@ func (s *sandboxImpl) Run(command string, args ...string) error {
 	if !s.isActive() {
 		return fmt.Errorf(sandboxInactiveErrFmt, s.id, "Run")
 	}
-	panic("implement me")
+
+	var isolateArgs []string
+	isolateArgs = append(isolateArgs,
+		fmt.Sprintf("--box-id=%d", s.id),
+		"--run",
+		"--",
+		command,
+	)
+	isolateArgs = append(isolateArgs, args...)
+
+	_, err := s.utilsSystem.Execute(isolateCmd, isolateArgs...)
+	return err
 }
 
 func (s *sandboxImpl) Destroy() error {
@@ -84,9 +96,11 @@ func (s *sandboxImpl) Destroy() error {
 
 	// destroy / cleanup the sandbox
 	var args []string
-	args = append(args, fmt.Sprintf("--box-id=%d", s.id))
-	args = append(args, "--cleanup")
-	_, err := s.utilsSystem.Execute("isolate", args...)
+	args = append(args,
+		fmt.Sprintf("--box-id=%d", s.id),
+		"--cleanup",
+	)
+	_, err := s.utilsSystem.Execute(isolateCmd, args...)
 	return err
 }
 
@@ -101,9 +115,11 @@ func (s *sandboxImpl) Prepare() error {
 	if s.isCGSupported {
 		args = append(args, "--cg")
 	}
-	args = append(args, fmt.Sprintf("--box-id=%d", s.id))
-	args = append(args, "--init")
-	_, err := s.utilsSystem.Execute("isolate", args...)
+	args = append(args,
+		fmt.Sprintf("--box-id=%d", s.id),
+		"--init",
+	)
+	_, err := s.utilsSystem.Execute(isolateCmd, args...)
 	return err
 }
 
