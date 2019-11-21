@@ -5,6 +5,7 @@ import (
 	"github.com/sandykarunia/fudge/sdk"
 	"github.com/sandykarunia/fudge/utils"
 	"io"
+	"io/ioutil"
 	"os"
 )
 
@@ -17,9 +18,8 @@ type Sandbox interface {
 	// if the file exists, it will overwrite the file
 	WriteFile(filename string, stream io.ReadCloser) error
 
-	// GetFile gets a file from
-	// we only need the filename because the file / folder structure is flat
-	GetFile(fileName string) (*os.File, error)
+	// ReadFile reads a file content and returns it as string
+	ReadFile(fileName string) (string, error)
 
 	// Run runs a command inside the sandbox instance
 	// - timeLimitMS = the run-time limit for the program to run in milliseconds,
@@ -76,11 +76,25 @@ func (s *sandboxImpl) WriteFile(filename string, stream io.ReadCloser) error {
 	return err
 }
 
-func (s *sandboxImpl) GetFile(fileName string) (*os.File, error) {
+func (s *sandboxImpl) ReadFile(fileName string) (string, error) {
 	if !s.isActive() {
-		return nil, fmt.Errorf(sandboxInactiveErrFmt, s.id, "GetFile")
+		return "", fmt.Errorf(sandboxInactiveErrFmt, s.id, "ReadFile")
 	}
-	panic("implement me")
+
+	// Open the file
+	file, err := os.Open(fileName)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	// Read all bytes, it is safe because we already put limit on file size when we run the program, and normally the
+	// limit is not that big
+	b, err := ioutil.ReadAll(file)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
 }
 
 func (s *sandboxImpl) Run(
