@@ -21,12 +21,20 @@ type TaskRunner interface {
 	// CompileCode compiles the code in a file inside the sandbox with specified language
 	// returns the compiled code filename
 	CompileCode(sb sandbox.Sandbox, filename string, lang language.Language) (string, error)
+
+	// FetchAndWriteToFile fetches contents from URL defined in urls, and write it to the files sequentially
+	// returns the filename for each url, sequentially.
+	FetchAndWriteToFile(sb sandbox.Sandbox, urls []string) ([]string, error)
 }
 
 type taskRunnerImpl struct {
 	sbFactory   sandbox.Factory
 	logger      logger.Logger
 	utilsString utils.String
+}
+
+func (t *taskRunnerImpl) FetchAndWriteToFile(sb sandbox.Sandbox, urls []string) ([]string, error) {
+	panic("implement me")
 }
 
 func (t *taskRunnerImpl) CompileCode(sb sandbox.Sandbox, filename string, lang language.Language) (string, error) {

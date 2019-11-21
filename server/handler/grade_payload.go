@@ -36,8 +36,8 @@ type gradeReq struct {
 	GradingLanguage string `json:"grading_language"`
 
 	// required, list of input URL & output URL for test cases
-	// if inputURL and outputURL have different ranges, the request will be rejected
-	// inputURL / outputURL have to be in specific form:
+	// if inputURLPatternAndRange and outputURLPatternAndRange have different ranges, the request will be rejected
+	// inputURLPatternAndRange / outputURLPatternAndRange have to be in specific form:
 	// - each of them has to have lengths == 2
 	// - the first element is the URL, with '{%}' in it, example: "http://your-tc-url/my_tc-{%}.in"
 	// - the second element is the range, which has to follow regex pattern '^\d+-\d+$', example: "1-5"
@@ -47,8 +47,8 @@ type gradeReq struct {
 	// - http://my-tc-url/tc_problem_a_3.in
 	// - http://my-tc-url/tc_problem_a_4.in
 	// - http://my-tc-url/tc_problem_a_5.in
-	InputURL  []string `json:"input_url"`
-	OutputURL []string `json:"output_url"`
+	InputURLPatternAndRange  []string `json:"input_url_pattern_and_range"`
+	OutputURLPatternAndRange []string `json:"output_url_pattern_and_range"`
 }
 
 func (payload *gradeReq) validate() []string {
@@ -85,31 +85,36 @@ func (payload *gradeReq) validate() []string {
 		errors = append(errors, fmt.Sprintf("time_limit_ms value must be less or equal than %d", maxTimeLimitMS))
 	}
 
-	// check input output URLs
-	if len(payload.InputURL) != 2 {
-		errors = append(errors, fmt.Sprintf("input_url must be an array with length equals to 2"))
+	// check input_url_pattern_and_range length
+	if len(payload.InputURLPatternAndRange) != 2 {
+		errors = append(errors, fmt.Sprintf("input_url_pattern_and_range must be an array with length equals to 2"))
 	}
-	if len(payload.OutputURL) != 2 {
-		errors = append(errors, fmt.Sprintf("output_url must be an array with length equals to 2"))
+	// check if input_url_pattern_and_range contains mandatory "{%}" string
+	if len(payload.InputURLPatternAndRange) > 0 && !strings.Contains(payload.InputURLPatternAndRange[0], "{%}") {
+		errors = append(errors, "URL string (1st element) in input_url_pattern_and_range have to contain '{%}' string")
 	}
-	if len(payload.InputURL) == 2 && len(payload.OutputURL) == 2 {
-		// check if input_url and output_url have same ranges
-		rng := payload.InputURL[1]
-		if rng != payload.OutputURL[1] {
-			errors = append(errors, fmt.Sprintf("range (2nd element) in input_url has to be equal to output_url"))
-		}
 
-		// check if the range is valid
-		if matched, _ := regexp.Match("^\\d+-\\d+$", []byte(rng)); !matched {
-			errors = append(errors, fmt.Sprintf("range (2nd element) in input_url and output_url have to follow regex pattern '^\\d+-\\d+$', e.g. '3-51'"))
+	// check output_url_pattern_and_range only if grading_code is empty
+	if len(payload.GradingCode) == 0 {
+		// check output_url_pattern_and_range length
+		if len(payload.OutputURLPatternAndRange) != 2 {
+			errors = append(errors, fmt.Sprintf("output_url_pattern_and_range must be an array with length equals to 2"))
 		}
-
-		// check if input_url and output_url contains mandatory "{%}" string
-		if !strings.Contains(payload.InputURL[0], "{%}") {
-			errors = append(errors, "URL string (1st element) in input_url have to contain '{%}' string")
+		// check if output_url_pattern_and_range contains mandatory "{%}" string
+		if len(payload.OutputURLPatternAndRange) > 0 && !strings.Contains(payload.OutputURLPatternAndRange[0], "{%}") {
+			errors = append(errors, "URL string (1st element) in output_url_pattern_and_range have to contain '{%}' string")
 		}
-		if !strings.Contains(payload.OutputURL[0], "{%}") {
-			errors = append(errors, "URL string (1st element) in output_url have to contain '{%}' string")
+		// check relation between input_url_pattern_and_range and output_url_pattern_and_range
+		if len(payload.InputURLPatternAndRange) == 2 && len(payload.OutputURLPatternAndRange) == 2 {
+			// check if input_url_pattern_and_range and output_url_pattern_and_range have same ranges
+			rng := payload.InputURLPatternAndRange[1]
+			if rng != payload.OutputURLPatternAndRange[1] {
+				errors = append(errors, fmt.Sprintf("range (2nd element) in input_url_pattern_and_range has to be equal to output_url_pattern_and_range"))
+			}
+			// check if the range is valid
+			if matched, _ := regexp.Match("^\\d+-\\d+$", []byte(rng)); !matched {
+				errors = append(errors, fmt.Sprintf("range (2nd element) in input_url_pattern_and_range and output_url_pattern_and_range have to follow regex pattern '^\\d+-\\d+$', e.g. '3-51'"))
+			}
 		}
 	}
 

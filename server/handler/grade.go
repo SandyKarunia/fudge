@@ -6,6 +6,8 @@ import (
 	"github.com/sandykarunia/fudge/grader"
 	"github.com/sandykarunia/fudge/language"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 // Grade ...
@@ -33,6 +35,14 @@ func (h *handlerImpl) Grade(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// split inputURLPatternAndRange and outputURLPatternAndRange to array of strings, replace the {%} pattern
+	var inputURLs, outputURLs []string
+	inputURLs = splitInputOutputPattern(payload.InputURLPatternAndRange)
+	// split outputURLPatternAndRange only if gradingCode is empty
+	if len(payload.GradingCode) == 0 {
+		outputURLs = splitInputOutputPattern(payload.OutputURLPatternAndRange)
+	}
+
 	// create uuid for the grade request
 	// this uuid will be used when the judge notifies the server
 	newUUID := uuid.New().String()
@@ -47,8 +57,8 @@ func (h *handlerImpl) Grade(w http.ResponseWriter, r *http.Request) {
 		GradingMethod:      payload.GradingMethod,
 		MemoryLimitKB:      payload.MemoryLimitKB,
 		TimeLimitMS:        payload.TimeLimitMS,
-		InputURL:           payload.InputURL,
-		OutputURL:          payload.OutputURL,
+		InputURL:           inputURLs,
+		OutputURL:          outputURLs,
 	}
 
 	// try to grade asynchronously
@@ -60,4 +70,23 @@ func (h *handlerImpl) Grade(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(&gradeRes{UUID: newUUID})
+}
+
+// helper function to split the input / output from pattern
+func splitInputOutputPattern(patternAndRange []string) []string {
+	split := strings.Split(patternAndRange[1], "-")
+	from, _ := strconv.Atoi(split[0])
+	to, _ := strconv.Atoi(split[1])
+	if from > to {
+		temp := from
+		from = to
+		to = temp
+	}
+
+	var res []string
+	for i := from; i <= to; i++ {
+		res = append(res, strings.ReplaceAll(patternAndRange[0], "{%}", strconv.Itoa(i)))
+	}
+
+	return res
 }
