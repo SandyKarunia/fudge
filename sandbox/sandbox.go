@@ -76,13 +76,13 @@ func (s *sandboxImpl) WriteFile(filename string, stream io.ReadCloser) error {
 	return err
 }
 
-func (s *sandboxImpl) ReadFile(fileName string) (string, error) {
+func (s *sandboxImpl) ReadFile(filename string) (string, error) {
 	if !s.isActive() {
 		return "", fmt.Errorf(sandboxInactiveErrFmt, s.id, "ReadFile")
 	}
 
 	// Open the file
-	file, err := os.Open(fileName)
+	file, err := os.Open(s.utilsPath.BoxDir(s.id) + filename)
 	if err != nil {
 		return "", err
 	}
