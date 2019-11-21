@@ -27,10 +27,11 @@ type Sandbox interface {
 	// - memoryLimitKB = limit memory usage of the program in KB
 	// - fileSizeLimitKB = limit file size created by the program, it supports multiple files
 	// - stdinFile = redirect stdin from file, it has to be accessible from inside the sandbox,
-	//   it can be empty which means no stdin
+	//   it can be empty which means no stdin file
 	// - stdoutFile = redirect stdout to a file, it has to be accessible from inside the sandbox, by default we redirect
-	//   stderr to stdout.
-	// - metaFile = output metadata (extra information about the run) to a file
+	//   stderr to stdout. It can be empty which means no stdout file
+	// - metaFile = output metadata (extra information about the run) to a file.
+	//   It can be empty, which means no meta file
 	Run(
 		timeLimitMS, memoryLimitKB, fileSizeLimitKB int64,
 		stdinFile, stdoutFile, metaFile string,
@@ -109,8 +110,6 @@ func (s *sandboxImpl) Run(
 	var isolateArgs []string
 	isolateArgs = append(isolateArgs,
 		fmt.Sprintf("--box-id=%d", s.id),
-		fmt.Sprintf("--meta=%s", metaFile),
-		fmt.Sprintf("--stdout=%s", stdoutFile),
 		fmt.Sprintf("--fsize=%d", fileSizeLimitKB),
 		fmt.Sprintf("--time=%.3f", float64(timeLimitMS)/1000.0),
 	)
@@ -119,8 +118,14 @@ func (s *sandboxImpl) Run(
 	} else {
 		isolateArgs = append(isolateArgs, fmt.Sprintf("--mem=%d", memoryLimitKB))
 	}
+	if len(metaFile) > 0 {
+		isolateArgs = append(isolateArgs, fmt.Sprintf("--meta=%s", metaFile))
+	}
 	if len(stdinFile) > 0 {
 		isolateArgs = append(isolateArgs, fmt.Sprintf("--stdin=%s", stdinFile))
+	}
+	if len(stdoutFile) > 0 {
+		isolateArgs = append(isolateArgs, fmt.Sprintf("--stdout=%s", stdoutFile))
 	}
 	isolateArgs = append(isolateArgs, "--", command)
 	isolateArgs = append(isolateArgs, args...)

@@ -1,6 +1,7 @@
 package taskrunner
 
 import (
+	"github.com/sandykarunia/fudge/language"
 	"github.com/sandykarunia/fudge/logger"
 	"github.com/sandykarunia/fudge/sandbox"
 	"github.com/sandykarunia/fudge/utils"
@@ -16,12 +17,32 @@ type TaskRunner interface {
 
 	// PrepareSubmissionCode writes submission code into the sandbox, returns created filename
 	PrepareSubmissionCode(sb sandbox.Sandbox, submissionCode string) (filename string, err error)
+
+	// CompileCode compiles the code in a file inside the sandbox with specified language
+	// returns the compiled code filename
+	CompileCode(sb sandbox.Sandbox, filename string, lang language.Language) (string, error)
 }
 
 type taskRunnerImpl struct {
 	sbFactory   sandbox.Factory
 	logger      logger.Logger
 	utilsString utils.String
+}
+
+func (t *taskRunnerImpl) CompileCode(sb sandbox.Sandbox, filename string, lang language.Language) (string, error) {
+	outputFilename := t.utilsString.GenerateRandomAlphanumeric(16)
+	compileCmd, args := lang.CompileCmd(filename, outputFilename)
+	// defaults to 10s, 128MB memory, 20MB file size
+	if err := sb.Run(
+		10000, 128*1024, 20*1024,
+		"", "", "",
+		compileCmd, args...,
+	); err != nil {
+		t.logger.Error("Failed to compile code, err = %s", err.Error())
+		return "", err
+	}
+	t.logger.Info("Code compiled successfully")
+	return outputFilename, nil
 }
 
 func (t *taskRunnerImpl) PrepareSandbox() (sandbox.Sandbox, error) {

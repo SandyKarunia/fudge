@@ -84,6 +84,7 @@ func (g *graderImpl) doGrade(payload *GradeAsyncPayload) {
 	// vars
 	var sb sandbox.Sandbox
 	var submissionCodeFilename string
+	var compiledSubmissionCodeFilename string
 	var err error
 
 	// prepare sandbox
@@ -98,11 +99,14 @@ func (g *graderImpl) doGrade(payload *GradeAsyncPayload) {
 		return
 	}
 
-	// TODO compile code first (COMPILING)
-	fmt.Println("TODO COMPILE " + submissionCodeFilename)
+	// compile code first
 	g.changeStatus(StatusCompiling, "Compiling source code")
+	if compiledSubmissionCodeFilename, err = g.taskRunner.CompileCode(sb, submissionCodeFilename, payload.SubmissionLanguage); err != nil {
+		return
+	}
 
 	// TODO fetch input, put into file (FETCH_INPUT)
+	fmt.Println(compiledSubmissionCodeFilename)
 	g.changeStatus(StatusFetchInput, "Fetching input data")
 
 	// TODO fetch output, put into file (FETCH_OUTPUT)
