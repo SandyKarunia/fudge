@@ -10,9 +10,48 @@ print_title() {
   echo -e "\033[0m"
 }
 
+# We are adding temp test files because go test will ignore the coverage for packages with no tests
+# to get the true coverage, we need to put test files in every packages
+# find all directories that DON'T have test files, excludes hidden and mocks directories
+dirsNoTest=$(
+  find . \
+  -not -path '*/\.*' \
+  -not -path '*/mocks' \
+  -not -path '*/scripts' \
+  -not -path '\.' \
+  -type d '!' \
+  -exec sh -c 'ls -1 "{}"|egrep -i -q ".*_test\.go$"' ';' \
+  -print
+)
+tempTestFileName="temporary_only_do_not_commit_test.go"
+
+print_title "Creating temporary test files in the directories with no test file..."
+# shellcheck disable=SC2068
+# disable the double-quotes check since we want it to split by newline
+for dir in ${dirsNoTest[@]}
+do
+  # for each directory, create a temporary test file so we can calculate true coverage later
+  tempTestPath="${dir}/${tempTestFileName}"
+  tempTestContent="package ${dir##*/}"
+  touch "${tempTestPath}"
+  echo "${tempTestContent}" > "${tempTestPath}"
+  echo "Created ${tempTestPath} with content '${tempTestContent}'"
+done
+
 print_title "Running tests..."
 go test -cover -race -coverprofile .coverage.out ./...
 go tool cover -func .coverage.out
+
+print_title "Removing temporary test files on ${#dirsNoTest[@]} directories..."
+# shellcheck disable=SC2068
+# disable the double-quotes check since we want it to split by newline
+for dir in ${dirsNoTest[@]}
+do
+  # for each directory, remove the created temporary test file
+  tempTestPath="${dir}/${tempTestFileName}"
+  rm "${tempTestPath}"
+  echo "Removed ${tempTestPath}"
+done
 
 print_title "Running go fmt..."
 goFmtOutput="$(go fmt ./...)"
