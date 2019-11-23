@@ -34,6 +34,29 @@ func (_m *TaskRunner) CompileCode(sb sandbox.Sandbox, filename string, lang lang
 	return r0, r1
 }
 
+// FetchAndWriteToFile provides a mock function with given fields: sb, urls
+func (_m *TaskRunner) FetchAndWriteToFile(sb sandbox.Sandbox, urls []string) ([]string, error) {
+	ret := _m.Called(sb, urls)
+
+	var r0 []string
+	if rf, ok := ret.Get(0).(func(sandbox.Sandbox, []string) []string); ok {
+		r0 = rf(sb, urls)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(sandbox.Sandbox, []string) error); ok {
+		r1 = rf(sb, urls)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // PrepareSandbox provides a mock function with given fields:
 func (_m *TaskRunner) PrepareSandbox() (sandbox.Sandbox, error) {
 	ret := _m.Called()

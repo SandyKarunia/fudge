@@ -4,6 +4,7 @@ import (
 	"github.com/sandykarunia/fudge/language"
 	"github.com/sandykarunia/fudge/logger"
 	"github.com/sandykarunia/fudge/sandbox"
+	"github.com/sandykarunia/fudge/sdk"
 	"github.com/sandykarunia/fudge/utils"
 	"io/ioutil"
 	"strings"
@@ -31,10 +32,44 @@ type taskRunnerImpl struct {
 	sbFactory   sandbox.Factory
 	logger      logger.Logger
 	utilsString utils.String
+	sdkHTTP     sdk.HTTPFunctions
 }
 
 func (t *taskRunnerImpl) FetchAndWriteToFile(sb sandbox.Sandbox, urls []string) ([]string, error) {
-	panic("implement me")
+	var outputFilename []string
+	// run for each URL
+	for _, url := range urls {
+		// use anonymous function so we can use defer
+		// takes in url as parameter
+		// returns created filename and error
+		fname, err := func(u string) (string, error) {
+			// get the data
+			resp, err := t.sdkHTTP.Get(u)
+			if err != nil {
+				return "", err
+			}
+			defer resp.Body.Close()
+
+			// generate filename
+			generatedFilename := t.utilsString.GenerateRandomAlphanumeric(32)
+
+			// write the body to the file
+			if err = sb.WriteFile(generatedFilename, resp.Body); err != nil {
+				return "", err
+			}
+
+			return generatedFilename, nil
+		}(url)
+
+		if err != nil {
+			t.logger.Error("Failed to fetch and write to file, err = %s", err.Error())
+			return nil, err
+		}
+
+		outputFilename = append(outputFilename, fname)
+	}
+	t.logger.Info("Fetch and write to file run successfully")
+	return outputFilename, nil
 }
 
 func (t *taskRunnerImpl) CompileCode(sb sandbox.Sandbox, filename string, lang language.Language) (string, error) {

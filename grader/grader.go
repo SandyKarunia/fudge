@@ -85,6 +85,8 @@ func (g *graderImpl) doGrade(payload *GradeAsyncPayload) {
 	var sb sandbox.Sandbox
 	var submissionCodeFilename string
 	var compiledSubmissionCodeFilename string
+	var inputDataFilenames []string
+	var outputDataFilenames []string
 	var err error
 
 	// prepare sandbox
@@ -105,12 +107,15 @@ func (g *graderImpl) doGrade(payload *GradeAsyncPayload) {
 		return
 	}
 
-	// TODO fetch input, put into file (FETCH_INPUT)
-	fmt.Println(compiledSubmissionCodeFilename)
 	g.changeStatus(StatusFetchInput, "Fetching input data")
+	if inputDataFilenames, err = g.taskRunner.FetchAndWriteToFile(sb, payload.InputURL); err != nil {
+		return
+	}
 
-	// TODO fetch output, put into file (FETCH_OUTPUT)
 	g.changeStatus(StatusFetchOutput, "Fetching output data")
+	if outputDataFilenames, err = g.taskRunner.FetchAndWriteToFile(sb, payload.OutputURL); err != nil {
+		return
+	}
 
 	// TODO grade submission (GRADING)
 	g.changeStatus(StatusGrading, "Grading")
@@ -125,6 +130,9 @@ func (g *graderImpl) doGrade(payload *GradeAsyncPayload) {
 		return
 	}
 	g.logger.Info("Sandbox with box-id = %d has been cleaned up", sb.GetID())
+
+	// TODO remove this, this is to prevent error during development
+	fmt.Println(compiledSubmissionCodeFilename, inputDataFilenames, outputDataFilenames)
 }
 
 // a helper function to help grader change its status
