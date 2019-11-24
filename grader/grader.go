@@ -124,12 +124,9 @@ func (g *graderImpl) doGrade(payload *GradeAsyncPayload) {
 	g.changeStatus(StatusNotifyResult, "Notifying result via webhook HTTP request")
 
 	g.changeStatus(StatusCleanUp, "Cleaning up sandbox with box-id = %d", sb.GetID())
-	err = sb.Destroy()
-	if err != nil {
-		g.logger.Error("Failed to clean up sandbox with box-id = %d, err = %s", sb.GetID(), err.Error())
+	if err = g.taskRunner.CleanupSandbox(sb); err != nil {
 		return
 	}
-	g.logger.Info("Sandbox with box-id = %d has been cleaned up", sb.GetID())
 
 	// TODO remove this, this is to prevent error during development
 	fmt.Println(compiledSubmissionCodeFilename, inputDataFilenames, outputDataFilenames)

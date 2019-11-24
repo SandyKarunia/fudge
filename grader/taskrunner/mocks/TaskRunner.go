@@ -13,6 +13,20 @@ type TaskRunner struct {
 	mock.Mock
 }
 
+// CleanupSandbox provides a mock function with given fields: sb
+func (_m *TaskRunner) CleanupSandbox(sb sandbox.Sandbox) error {
+	ret := _m.Called(sb)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(sandbox.Sandbox) error); ok {
+		r0 = rf(sb)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // CompileCode provides a mock function with given fields: sb, filename, lang
 func (_m *TaskRunner) CompileCode(sb sandbox.Sandbox, filename string, lang language.Language) (string, error) {
 	ret := _m.Called(sb, filename, lang)

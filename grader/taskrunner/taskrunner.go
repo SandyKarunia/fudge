@@ -16,6 +16,9 @@ type TaskRunner interface {
 	// PrepareSandbox prepares the sandbox before use, returns the sandbox instance
 	PrepareSandbox() (sandbox.Sandbox, error)
 
+	// CleanupSandbox cleans up and destroys the sandbox
+	CleanupSandbox(sb sandbox.Sandbox) error
+
 	// PrepareSubmissionCode writes submission code into the sandbox, returns created filename
 	PrepareSubmissionCode(sb sandbox.Sandbox, submissionCode string) (filename string, err error)
 
@@ -96,6 +99,16 @@ func (t *taskRunnerImpl) PrepareSandbox() (sandbox.Sandbox, error) {
 	}
 	t.logger.Info("Sandbox prepared with box-id = %d", sb.GetID())
 	return sb, nil
+}
+
+func (t *taskRunnerImpl) CleanupSandbox(sb sandbox.Sandbox) error {
+	err := sb.Destroy()
+	if err != nil {
+		t.logger.Error("Failed to clean up sandbox with box-id = %d, err = %s", sb.GetID(), err.Error())
+		return err
+	}
+	t.logger.Info("Sandbox with box-id = %d has been cleaned up", sb.GetID())
+	return nil
 }
 
 func (t *taskRunnerImpl) PrepareSubmissionCode(sb sandbox.Sandbox, submissionCode string) (filename string, err error) {
