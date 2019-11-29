@@ -1,6 +1,7 @@
 package sandbox
 
 import (
+	"github.com/sandykarunia/fudge/flags"
 	"github.com/sandykarunia/fudge/logger"
 	"github.com/sandykarunia/fudge/sdk"
 	"github.com/sandykarunia/fudge/utils"
@@ -16,6 +17,7 @@ type Factory interface {
 type factoryImpl struct {
 	sdkOS       sdk.OSFunctions
 	sdkIO       sdk.IOFunctions
+	flags       flags.Flags
 	utilsPath   utils.Path
 	utilsSystem utils.System
 	logger      logger.Logger
@@ -29,16 +31,23 @@ func (f *factoryImpl) NewPreparedSandbox() (Sandbox, error) {
 	// - the range of ID is 0-999
 	// - the judge will clean up the sandbox instance after usage, which means the used ID becomes available
 	newID := rand.Uint32() % 1000
-	sandbox := &sandboxImpl{
-		sdkOS:         f.sdkOS,
-		sdkIO:         f.sdkIO,
-		id:            newID,
-		isDestroyed:   false,
-		isPrepared:    false,
-		isCGSupported: f.isCGSupported,
-		utilsPath:     f.utilsPath,
-		utilsSystem:   f.utilsSystem,
+	var sandbox Sandbox
+
+	if f.flags.GetBool(flags.FakeSandbox) {
+		panic("implement me")
+	} else {
+		sandbox = &sandboxImpl{
+			sdkOS:         f.sdkOS,
+			sdkIO:         f.sdkIO,
+			id:            newID,
+			isDestroyed:   false,
+			isPrepared:    false,
+			isCGSupported: f.isCGSupported,
+			utilsPath:     f.utilsPath,
+			utilsSystem:   f.utilsSystem,
+		}
 	}
+
 	err := sandbox.Prepare()
 
 	return sandbox, err

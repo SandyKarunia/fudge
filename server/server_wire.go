@@ -4,6 +4,7 @@ package server
 
 import (
 	"github.com/google/wire"
+	"github.com/sandykarunia/fudge/flags"
 	"github.com/sandykarunia/fudge/grader"
 	"github.com/sandykarunia/fudge/grader/taskrunner"
 	"github.com/sandykarunia/fudge/groundcheck"
@@ -20,6 +21,7 @@ func Instance() Server {
 	wire.Build(
 		Provider,
 		checkers.Provider,
+		flags.Provider,
 		grader.Provider,
 		groundcheck.Provider,
 		handler.Provider,

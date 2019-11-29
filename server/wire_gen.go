@@ -6,6 +6,7 @@
 package server
 
 import (
+	"github.com/sandykarunia/fudge/flags"
 	"github.com/sandykarunia/fudge/grader"
 	"github.com/sandykarunia/fudge/grader/taskrunner"
 	"github.com/sandykarunia/fudge/groundcheck"
@@ -31,7 +32,9 @@ func Instance() Server {
 	sniffersSniffers := sniffers.Provider(system)
 	groundCheck := groundcheck.Provider(checkersCheckers, sniffersSniffers)
 	loggerLogger := logger.Provider(osFunctions, path)
-	factory := sandbox.Provider(osFunctions, ioFunctions, path, system, loggerLogger)
+	flagFunctions := sdk.ProvideFlagFunctions()
+	flagsFlags := flags.Provider(flagFunctions)
+	factory := sandbox.Provider(osFunctions, ioFunctions, flagsFlags, path, system, loggerLogger)
 	utilsString := utils.ProvideString()
 	httpFunctions := sdk.ProvideHTTPFunctions()
 	taskRunner := taskrunner.Provider(factory, loggerLogger, utilsString, httpFunctions)
