@@ -2,7 +2,7 @@
 
 set -eo pipefail
 
-print_title() {
+function print_title() {
   echo -e "\033[0;36m"
   echo "===================="
   echo "$1"
@@ -24,55 +24,83 @@ dirsNoTest=$(
   -print
 )
 tempTestFileName="temporary_only_do_not_commit_test.go"
+coverageFilePath=".coverage.out"
 
-print_title "Creating temporary test files in the directories with no test file..."
-# shellcheck disable=SC2068
-# disable the double-quotes check since we want it to split by newline
-for dir in ${dirsNoTest[@]}
-do
-  # for each directory, create a temporary test file so we can calculate true coverage later
-  tempTestPath="${dir}/${tempTestFileName}"
-  tempTestContent="package ${dir##*/}"
-  touch "${tempTestPath}"
-  echo "${tempTestContent}" > "${tempTestPath}"
-  echo "Created ${tempTestPath} with content '${tempTestContent}'"
-done
+function create_temp_test_files() {
+  print_title "Creating temporary test files in the directories with no test file..."
+  # shellcheck disable=SC2068
+  # disable the double-quotes check since we want it to split by newline
+  for dir in ${dirsNoTest[@]}
+  do
+    # for each directory, create a temporary test file so we can calculate true coverage later
+    tempTestPath="${dir}/${tempTestFileName}"
+    tempTestContent="package ${dir##*/}"
+    touch "${tempTestPath}"
+    echo "${tempTestContent}" > "${tempTestPath}"
+    echo "Created ${tempTestPath} with content '${tempTestContent}'"
+  done
+}
 
-print_title "Running tests..."
-go test -cover -race -coverprofile .coverage.out ./...
-go tool cover -func .coverage.out
+function remove_temp_test_files() {
+  print_title "Removing temporary test files..."
+  filePaths=$(
+    find . \
+    -type f \
+    -name ${tempTestFileName}
+  )
+  # shellcheck disable=SC2068
+  # disable the double-quotes check since we want it to split by newline
+  for p in ${filePaths[@]}
+  do
+    # for each directory, remove the created temporary test file
+    tempTestPath="${p}"
+    rm "${tempTestPath}"
+    echo "Removed ${tempTestPath}"
+  done
+}
 
-print_title "Removing temporary test files on ${#dirsNoTest[@]} directories..."
-# shellcheck disable=SC2068
-# disable the double-quotes check since we want it to split by newline
-for dir in ${dirsNoTest[@]}
-do
-  # for each directory, remove the created temporary test file
-  tempTestPath="${dir}/${tempTestFileName}"
-  rm "${tempTestPath}"
-  echo "Removed ${tempTestPath}"
-done
+function run_tests() {
+  print_title "Running tests..."
+  go test -cover -race -coverprofile ${coverageFilePath} ./...
+  go tool cover -func ${coverageFilePath}
+}
 
-print_title "Running go fmt..."
-goFmtOutput="$(go fmt ./...)"
-if [ -n "${goFmtOutput}" ]
-then
-  echo "go fmt fails on the following files:"
-  echo "${goFmtOutput}"
-  exit 1
-fi
+function run_go_fmt() {
+  print_title "Running go fmt..."
+  goFmtOutput="$(go fmt ./...)"
+  if [ -n "${goFmtOutput}" ]
+  then
+    echo "go fmt fails on the following files:"
+    echo "${goFmtOutput}"
+    exit 1
+  fi
+}
 
-print_title "Running golint..."
-# find all folders under current directory, excluding hidden items and /mocks folders
-foldersToLint=($(find . -type d -not -path '*/\.*' | grep -v /mocks))
-for t in "${foldersToLint[@]}"
-do
-  echo "$t"
-done
-"${GOPATH}"/bin/golint -set_exit_status "${foldersToLint[@]}"
+function run_go_lint() {
+  print_title "Running golint..."
+  # find all folders under current directory, excluding hidden items and /mocks folders
+  foldersToLint=($(find . -type d -not -path '*/\.*' | grep -v /mocks))
+  for t in "${foldersToLint[@]}"
+  do
+    echo "$t"
+  done
+  "${GOPATH}"/bin/golint -set_exit_status "${foldersToLint[@]}"
+}
 
-if [ "${CIRCLECI}" == "true" ]
-then
-  print_title "Uploading coverage result to coveralls..."
-  "${GOPATH}"/bin/goveralls -coverprofile=.coverage.out -service=circle-ci -repotoken="${COVERALLS_TOKEN}"
-fi
+function upload_coverage_result() {
+  if [ "${CIRCLECI}" == "true" ]
+  then
+    print_title "Uploading coverage result to coveralls..."
+    "${GOPATH}"/bin/goveralls -coverprofile=${coverageFilePath} -service=circle-ci -repotoken="${COVERALLS_TOKEN}"
+  fi
+}
+
+# traps
+trap remove_temp_test_files EXIT
+
+# main
+create_temp_test_files
+run_tests
+run_go_fmt
+run_go_lint
+upload_coverage_result

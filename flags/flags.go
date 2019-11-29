@@ -2,9 +2,11 @@ package flags
 
 import "github.com/sandykarunia/fudge/sdk"
 
+// FlagName ...
 type FlagName string
 
 // Flags is an interface to get the command line flag values
+//go:generate mockery -name=Flags
 type Flags interface {
 	// GetBool ...
 	GetBool(flagName FlagName) bool
@@ -24,6 +26,7 @@ func (f *flagsImpl) GetBool(flagName FlagName) bool {
 	return *f.boolValues[flagName]
 }
 
+// Constants for all available flags
 const (
 	FakeSandbox FlagName = "fake-sandbox"
 )

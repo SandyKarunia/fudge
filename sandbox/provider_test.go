@@ -14,5 +14,5 @@ func TestProvider(t *testing.T) {
 	mockLogger := &mocks.Logger{}
 	mockLogger.On("Warn", mock.Anything).Return()
 	mockLogger.On("Info", mock.Anything).Return()
-	assert.Implements(t, (*Factory)(nil), Provider(nil, nil, nil, mockSystem, mockLogger))
+	assert.Implements(t, (*Factory)(nil), Provider(nil, nil, nil, nil, mockSystem, mockLogger))
 }

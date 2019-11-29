@@ -1,7 +1,8 @@
 package sandbox
 
 import (
-	"github.com/sandykarunia/fudge/utils/mocks"
+	flagsMocks "github.com/sandykarunia/fudge/flags/mocks"
+	utilsMocks "github.com/sandykarunia/fudge/utils/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"math/rand"
@@ -9,13 +10,15 @@ import (
 	"time"
 )
 
-func TestFactoryImpl_NewSandbox(t *testing.T) {
+func TestFactoryImpl_NewPreparedSandbox(t *testing.T) {
 	rand.Seed(time.Now().UTC().UnixNano())
-	mockPath := &mocks.Path{}
+	mockPath := &utilsMocks.Path{}
 	mockPath.On("IsolateBinary").Return("")
-	mockSystem := &mocks.System{}
+	mockSystem := &utilsMocks.System{}
 	mockSystem.On("Execute", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return("", nil)
-	obj := factoryImpl{utilsPath: mockPath, utilsSystem: mockSystem}
+	mockFlags := &flagsMocks.Flags{}
+	mockFlags.On("GetBool", mock.Anything).Return(false)
+	obj := factoryImpl{utilsPath: mockPath, utilsSystem: mockSystem, flags: mockFlags}
 
 	// should return different IDs most of the time
 	usedIDs := map[uint32]bool{}
