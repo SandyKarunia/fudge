@@ -34,7 +34,7 @@ func Instance() Server {
 	loggerLogger := logger.Provider(osFunctions, path)
 	flagFunctions := sdk.ProvideFlagFunctions()
 	flagsFlags := flags.Provider(flagFunctions)
-	factory := sandbox.Provider(osFunctions, ioFunctions, flagsFlags, path, system, loggerLogger)
+	factory := sandbox.Provider(osFunctions, ioFunctions, execFunctions, flagsFlags, path, system, loggerLogger)
 	utilsString := utils.ProvideString()
 	httpFunctions := sdk.ProvideHTTPFunctions()
 	taskRunner := taskrunner.Provider(factory, loggerLogger, utilsString, httpFunctions)

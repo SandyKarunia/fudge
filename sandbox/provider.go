@@ -11,6 +11,7 @@ import (
 func Provider(
 	sdkOS sdk.OSFunctions,
 	sdkIO sdk.IOFunctions,
+	sdkExec sdk.ExecFunctions,
 	flags flags.Flags,
 	path utils.Path,
 	system utils.System,
@@ -18,6 +19,7 @@ func Provider(
 	factory := &factoryImpl{
 		sdkOS:       sdkOS,
 		sdkIO:       sdkIO,
+		sdkExec:     sdkExec,
 		flags:       flags,
 		utilsPath:   path,
 		utilsSystem: system,

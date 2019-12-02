@@ -17,6 +17,7 @@ type Factory interface {
 type factoryImpl struct {
 	sdkOS       sdk.OSFunctions
 	sdkIO       sdk.IOFunctions
+	sdkExec     sdk.ExecFunctions
 	flags       flags.Flags
 	utilsPath   utils.Path
 	utilsSystem utils.System
@@ -34,9 +35,18 @@ func (f *factoryImpl) NewPreparedSandbox() (Sandbox, error) {
 	var sandbox Sandbox
 
 	if f.flags.GetBool(flags.FakeSandbox) {
-		panic("implement me")
+		sandbox = &fakeImpl{
+			sdkOS:       f.sdkOS,
+			sdkIO:       f.sdkIO,
+			sdkExec:     f.sdkExec,
+			id:          newID,
+			isDestroyed: false,
+			isPrepared:  false,
+			utilsPath:   f.utilsPath,
+			utilsSystem: f.utilsSystem,
+		}
 	} else {
-		sandbox = &sandboxImpl{
+		sandbox = &isolateImpl{
 			sdkOS:         f.sdkOS,
 			sdkIO:         f.sdkIO,
 			id:            newID,
